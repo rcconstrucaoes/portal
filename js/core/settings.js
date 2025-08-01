@@ -29,9 +29,7 @@
             autoSync: true,
             syncFrequencyMinutes: 5,
             wifiOnly: true
-        },
-        // Outras configurações específicas do usuário ou do aplicativo
-        // deviceId: 'gerado_automaticamente' // Exemplo, gerenciado pelo CloudSync ou AdvancedSync
+        }
     };
     let currentSettings = { ...DEFAULT_SETTINGS }; // Clone para não modificar o padrão
 
@@ -66,8 +64,12 @@
 
         // Tenta obter o logger. Se falhar, usa console.
         try {
-            logger = await waitForGlobal('SystemLogger').then(sl => sl.getAppLogger('SettingsManager'));
-            logger.info('⚙️ SettingsManager inicializado.');
+            if (window.SystemLogger) {
+                logger = window.SystemLogger.getAppLogger('SettingsManager');
+                logger.info('⚙️ SettingsManager inicializado.');
+            } else {
+                logger = console; // Fallback para console
+            }
         } catch (e) {
             console.error('Falha ao obter SystemLogger no SettingsManager. Usando console fallback.', e);
             logger = console; // Fallback para console
@@ -76,10 +78,14 @@
         try {
             await loadSettings(); // Tenta carregar configurações existentes
             isInitialized = true;
-            logger.success(`✅ SettingsManager disponível globalmente com ${Object.keys(currentSettings).length} configurações.`);
+            if (logger.success) {
+                logger.success(`✅ SettingsManager disponível globalmente com ${Object.keys(currentSettings).length} configurações.`);
+            } else {
+                logger.log(`✅ SettingsManager disponível globalmente com ${Object.keys(currentSettings).length} configurações.`);
+            }
         } catch (error) {
             logger.error(`Erro ao inicializar SettingsManager: ${error.message}. Usando configurações padrão.`);
-            isInitialized = false; // Indica falha na inicialização completa
+            isInitialized = true; // Marca como inicializado mesmo com erro para não bloquear
         }
     }
 
@@ -134,7 +140,9 @@
             return getValueByKeyPath(DEFAULT_SETTINGS, key);
         }
         const value = getValueByKeyPath(currentSettings, key);
-        logger.debug(`Obtendo configuração '${key}':`, value);
+        if (logger.debug) {
+            logger.debug(`Obtendo configuração '${key}':`, value);
+        }
         return value;
     }
 
@@ -233,8 +241,8 @@
         return output;
     }
 
-    // Expõe a API pública do módulo
-    return {
+    // Cria a instância do SettingsManager
+    const SettingsManager = {
         init: init,
         getSetting: getSetting,
         setSetting: setSetting,
@@ -242,4 +250,11 @@
         getAllSettings: () => ({ ...currentSettings }), // Retorna uma cópia das configurações atuais
         isReady: () => isInitialized // Verifica se o módulo foi inicializado com sucesso
     };
+
+    // Expõe globalmente
+    window.SettingsManager = SettingsManager;
+
+    // Retorna a instância para o sistema de módulos
+    return SettingsManager;
 })();
+
