@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="css/notifications.css">
     </head>
 <body>
-    <div class="app-container">
+    <div id="app" class="app-container">
         <aside class="sidebar">
             <div class="sidebar-header">
                 <a href="/#dashboard" class="nav-logo">
@@ -34,55 +34,55 @@
             <nav class="nav-menu">
                 <ul class="nav-list">
                     <li class="nav-item active" data-page="dashboard">
-                        <a href="/#dashboard" class="nav-link">
+                        <a href="#dashboard" class="nav-link">
                             <i class="fas fa-home"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item" data-page="clients">
-                        <a href="/#clients" class="nav-link">
+                        <a href="#clientes" class="nav-link">
                             <i class="fas fa-users"></i>
                             <span>Clientes</span>
                         </a>
                     </li>
                     <li class="nav-item" data-page="budgets">
-                        <a href="/#budgets" class="nav-link">
+                        <a href="#orcamentos" class="nav-link">
                             <i class="fas fa-file-invoice-dollar"></i>
                             <span>Orçamentos</span>
                         </a>
                     </li>
                     <li class="nav-item" data-page="contracts">
-                        <a href="/#contracts" class="nav-link">
+                        <a href="#contratos" class="nav-link">
                             <i class="fas fa-handshake"></i>
                             <span>Contratos</span>
                         </a>
                     </li>
                     <li class="nav-item" data-page="financial">
-                        <a href="/#financial" class="nav-link">
+                        <a href="#financeiro" class="nav-link">
                             <i class="fas fa-chart-line"></i>
                             <span>Financeiro</span>
                         </a>
                     </li>
                     <li class="nav-item" data-page="reports">
-                        <a href="/#reports" class="nav-link">
+                        <a href="#relatorios" class="nav-link">
                             <i class="fas fa-chart-pie"></i>
                             <span>Relatórios</span>
                         </a>
                     </li>
                     <li class="nav-item" data-page="settings">
-                        <a href="/#settings" class="nav-link">
+                        <a href="#configuracoes" class="nav-link">
                             <i class="fas fa-cog"></i>
                             <span>Configurações</span>
                         </a>
                     </li>
                     <li class="nav-item" data-page="suppliers">
-                        <a href="/#suppliers" class="nav-link">
+                        <a href="#fornecedores" class="nav-link">
                             <i class="fas fa-truck-loading"></i>
                             <span>Fornecedores</span>
                         </a>
                     </li>
                     <li class="nav-item" data-page="import">
-                        <a href="/import.html" class="nav-link"> <i class="fas fa-file-import"></i>
+                        <a href="#importar" class="nav-link"> <i class="fas fa-file-import"></i>
                             <span>Importar Dados</span>
                         </a>
                     </li>
@@ -109,6 +109,7 @@
         <span>Você está offline. Algumas funcionalidades podem estar limitadas.</span>
     </div>
     
+    <script src="js/simple-auth.js"></script>
     <script src="js/init_system_js.js" defer></script>
     <script>
         // Esta é a lógica de bootstrapping inicial do cliente.
