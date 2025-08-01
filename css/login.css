@@ -1,0 +1,145 @@
+/**
+ * RC Construções - Estilos para a Página de Login
+ * Versão 5.1 - Revisado e Aprimorado
+ *
+ * Define a aparência e o comportamento dos elementos da página de login,
+ * como o card de formulário, os inputs, botões e links.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS (para alinhamento com a paleta de cores) ===== */
+/* As variáveis são importadas implicitamente de modern_main_css.css e components.css */
+:root {
+    /* Cores */
+    --color-primary: #f58220;
+    --color-primary-dark: #d46f1a;
+    --color-secondary: #1a3a6c;
+    --color-dark: #2d3748;
+    --color-text: #4a5568;
+    --color-border: #e2e8f0;
+    --color-light: #f7fafc;
+    --color-bg-app: #eef2f6;
+
+    /* Espaçamento e Borda */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --radius-lg: 12px;
+
+    /* Sombras */
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.12), 0 4px 6px rgba(0, 0, 0, 0.07);
+
+    /* Transições */
+    --transition-smooth: all 0.3s ease-in-out;
+}
+
+/* ===== ESTILO DO CONTAINER GERAL DA PÁGINA DE LOGIN ===== */
+body {
+    background-color: var(--color-bg-app); /* Fundo suave */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: var(--spacing-xl);
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* ===== CARD DO FORMULÁRIO DE LOGIN ===== */
+.login-card {
+    background-color: var(--color-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--color-border);
+    text-align: center;
+    transition: var(--transition-smooth);
+}
+
+/* Adicionar um sutil efeito de elevação no hover para desktops */
+@media (min-width: 768px) {
+    .login-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+    }
+}
+
+/* ===== CABEÇALHO DO CARD DE LOGIN ===== */
+.login-header {
+    margin-bottom: var(--spacing-xl);
+}
+
+.login-logo {
+    max-width: 150px;
+    height: auto;
+    margin: 0 auto var(--spacing-md);
+    display: block;
+}
+
+.login-header h2 {
+    font-size: 1.75rem;
+    color: var(--color-secondary);
+    font-weight: 700;
+    margin: 0;
+}
+
+/* ===== FORMULÁRIO E INPUTS ===== */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.login-form .form-control {
+    width: 100%;
+    box-sizing: border-box; /* Garante que padding e borda não aumentem a largura */
+}
+
+.login-button {
+    width: 100%;
+    margin-top: var(--spacing-md);
+    font-size: 1rem;
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+/* ===== LINKS E AÇÕES ADICIONAIS ===== */
+.login-actions {
+    margin-top: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.login-actions a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.login-actions a:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 480px) {
+    body {
+        padding: var(--spacing-md);
+    }
+    .login-card {
+        padding: var(--spacing-lg);
+    }
+    .login-header h2 {
+        font-size: 1.5rem;
+    }
+    .login-button {
+        padding: var(--spacing-sm) var(--spacing-lg);
+    }
+}

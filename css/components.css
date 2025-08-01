@@ -1,0 +1,575 @@
+/**
+ * RC Construções - Estilos de Componentes Reutilizáveis (Revisado e Aprimorado)
+ * Versão 5.1 - Versão Robusta e Completa
+ * Este arquivo define a aparência de todos os elementos de UI reutilizáveis,
+ * agora alinhados com a paleta de cores e princípios de design do site de visitantes.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS (Custom Properties) - Alinhadas com style.css e modern_main_css.css ===== */
+:root {
+    /* Cores Principais */
+    --color-primary: #f58220; /* Laranja RC */
+    --color-primary-dark: #d46f1a; /* Laranja RC mais escuro */
+    --color-secondary: #1a3a6c; /* Azul Acinzentado RC */
+    --color-dark: #2d3748; /* Cor para textos e elementos escuros */
+    --color-light: #f7fafc; /* Cor de fundo clara */
+    --color-text: #4a5568; /* Cor padrão para textos */
+    --color-border: #e2e8f0; /* Cor para bordas */
+    --color-placeholder: #a0aec0; /* Cor para texto de placeholder */
+    --color-bg-app: #eef2f6; /* Fundo geral do aplicativo (referência para consistência) */
+
+    /* Cores de Estado - ATUALIZADAS para #28a745 para o sucesso, conforme style.css */
+    --color-success: #28a745; /* Verde sucesso */
+    --color-success-light: rgba(40, 167, 69, 0.2); /* Verde sucesso mais claro para sombras/foco */
+    --color-error: #dc3545; /* Vermelho erro */
+    --color-error-light: rgba(220, 53, 69, 0.2); /* Vermelho erro mais claro para sombras de foco */
+    --color-warning: #ffc107; /* Amarelo alerta */
+    --color-warning-light: rgba(255, 193, 7, 0.2); /* Amarelo alerta mais claro */
+    --color-info: #17a2b8; /* Azul info */
+    --color-info-light: rgba(23, 162, 184, 0.2); /* Azul info mais claro */
+    --color-focus-ring: rgba(245, 130, 32, 0.5); /* Anel de foco (transparente laranja) */
+
+    /* Fontes */
+    --font-family-base: 'Inter', sans-serif;
+    --font-size-base: 16px; /* Tamanho base da fonte */
+
+    /* Espaçamento - Padronizado e escalável */
+    --spacing-xs: 0.25rem;  /* 4px */
+    --spacing-sm: 0.5rem;   /* 8px */
+    --spacing-md: 1rem;     /* 16px */
+    --spacing-lg: 1.5rem;   /* 24px */
+    --spacing-xl: 2rem;     /* 32px */
+    --spacing-xxl: 3rem;    /* 48px */
+
+    /* Raio da Borda (Border Radius) - Padronizado para suavidade */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px; /* Para pílulas/círculos */
+
+    /* Sombras (Box Shadows) - Mais elegantes e sutis */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.12), 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.05);
+
+    /* Transições */
+    --transition-fast: 0.2s ease-out;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== BOTÕES (Buttons) - Visual Aprimorado ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md); /* Mais suave */
+  font-family: var(--font-family-base); /* Usa a fonte global */
+  font-size: 0.95rem; /* Um pouco maior */
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-smooth); /* Transição mais suave */
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.5; /* Mais suave */
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Foco visível para acessibilidade */
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px; /* Offset maior para visibilidade */
+  box-shadow: 0 0 0 3px var(--color-focus-ring); /* Anel de foco mais proeminente */
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-light); /* Usando light como um hover background sutil */
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-xs); /* Sombra sutil no hover */
+}
+
+.btn-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-text);
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-light); /* Fundo sutil no hover */
+  color: var(--color-dark); /* Texto mais escuro no hover para contraste */
+}
+
+
+/* ===== FORMULÁRIOS (Forms) - Mais limpos e intuitivos ===== */
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-label {
+  display: block;
+  font-size: 0.9rem; /* Um pouco maior */
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--color-error);
+}
+
+.form-control {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--color-light); /* Fundo claro para campos */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem; /* Tamanho de fonte padrão */
+  color: var(--color-dark);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control::placeholder {
+  color: var(--color-placeholder); /* Cor do placeholder */
+  opacity: 0.8;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* Estilos de Validação */
+.form-control.is-invalid {
+  border-color: var(--color-error);
+}
+.form-control.is-invalid:focus {
+  box-shadow: 0 0 0 3px var(--color-error-light);
+}
+.form-control.is-valid {
+  border-color: var(--color-success);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 120px; /* Um pouco maior */
+}
+
+/* Checkboxes e Radios (estilo básico) */
+.form-check {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    cursor: pointer;
+}
+.form-check-input {
+    width: 1rem;
+    height: 1rem;
+    margin-right: var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    appearance: none; /* Remove o estilo padrão */
+    position: relative;
+    top: -1px; /* Ajuste fino para alinhamento */
+}
+.form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.form-check-input:checked::after {
+    content: '';
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: white;
+    border-radius: 50%; /* Para radio buttons */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.form-check-input[type="checkbox"]:checked::after {
+    content: '\2713'; /* Checkmark */
+    font-size: 0.75rem;
+    color: white;
+    background: none;
+    border-radius: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form-check-label {
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+
+/* ===== TABELAS (Tables) - Mais legíveis e modernas ===== */
+.table-container {
+  overflow-x: auto; /* Garante scroll em telas pequenas */
+  background-color: var(--color-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border); /* Borda sutil */
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate; /* Permite border-radius nas células */
+  border-spacing: 0; /* Remove espaçamento padrão */
+  text-align: left;
+}
+
+.table th, .table td {
+  padding: var(--spacing-md) var(--spacing-lg); /* Padding ajustado */
+  vertical-align: middle;
+}
+
+.table th {
+  font-size: 0.85rem; /* Um pouco maior */
+  font-weight: 700; /* Mais negrito */
+  text-transform: uppercase;
+  color: var(--color-text);
+  background-color: var(--color-light); /* Fundo claro para cabeçalho */
+  border-bottom: 1px solid var(--color-border);
+  position: sticky; /* Sticky header para tabelas longas */
+  top: 0;
+  z-index: 10;
+}
+
+/* Arredonda os cantos do cabeçalho da tabela */
+.table th:first-child {
+    border-top-left-radius: var(--radius-lg);
+}
+.table th:last-child {
+    border-top-right-radius: var(--radius-lg);
+}
+
+.table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.table tbody tr:hover {
+  background-color: rgba(var(--color-primary), 0.05); /* Hover sutil com a cor primária */
+}
+
+.table tbody tr td {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none; /* Remove a borda da última linha */
+}
+
+/* Estilos para células de ação (ex: botões de editar/deletar) */
+.table td.actions {
+    text-align: center;
+    white-space: nowrap; /* Evita quebra de linha */
+}
+.table td.actions .btn-icon {
+    background: none;
+    border: none;
+    padding: var(--spacing-xs);
+    color: var(--color-text);
+    font-size: 1.1rem;
+    transition: color var(--transition-fast);
+}
+.table td.actions .btn-icon:hover {
+    color: var(--color-primary);
+}
+
+
+/* ===== CARDS (General Card Styling) ===== */
+.card {
+  background-color: var(--color-light);
+  border-radius: var(--radius-lg); /* Consistente com dashboard.css */
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-xl);
+  transition: all var(--transition-smooth);
+  border: 1px solid var(--color-border); /* Borda sutil */
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Stat Card (estilo já aprimorado em dashboard.css, mantido aqui para consistência) */
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--color-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+.stat-card .stat-icon {
+  font-size: 2rem;
+  color: var(--color-primary);
+}
+.stat-card .stat-label {
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+.stat-card .stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-dark);
+}
+
+
+/* ===== MODAIS (Modals) - Mais modernos e responsivos ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Fundo mais escuro */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; /* Z-index alto para garantir que fique acima de tudo */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-smooth);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: var(--color-light);
+  border-radius: var(--radius-xl); /* Cantos mais arredondados */
+  box-shadow: var(--shadow-xl); /* Sombra mais profunda para destacar */
+  width: 95%; /* Maior largura em telas grandes */
+  max-width: 700px; /* Max-width ajustada */
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.9); /* Começa menor */
+  transition: transform var(--transition-smooth);
+}
+
+.modal-overlay.active .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  padding: var(--spacing-lg) var(--spacing-xl); /* Padding ajustado */
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-light); /* Fundo branco para o header do modal */
+  position: sticky; /* Fixa o header no topo do modal ao rolar */
+  top: 0;
+  z-index: 10;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.35rem; /* Título do modal maior */
+  color: var(--color-dark);
+  font-weight: 700;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.8rem; /* Ícone de fechar maior */
+  cursor: pointer;
+  color: var(--color-text);
+  transition: color var(--transition-fast);
+}
+.modal-close:hover {
+    color: var(--color-error);
+}
+
+.modal-body {
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  flex-grow: 1; /* Permite que o body preencha o espaço disponível */
+}
+
+.modal-footer {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  background-color: var(--color-light); /* Fundo branco para o rodapé do modal */
+  position: sticky; /* Fixa o footer na base do modal ao rolar */
+  bottom: 0;
+  z-index: 10;
+}
+
+/* ===== COMPONENTES DE UI DIVERSOS ===== */
+.badge {
+  display: inline-block;
+  padding: 0.3em 0.7em; /* Padding um pouco maior */
+  font-size: 0.8rem; /* Um pouco maior */
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: var(--radius-full);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.badge-primary { background-color: var(--color-primary); }
+.badge-success { background-color: var(--color-success); }
+.badge-danger { background-color: var(--color-error); }
+.badge-info { background-color: var(--color-info); }
+.badge-warning { background-color: var(--color-warning); color: var(--color-dark); }
+.badge-secondary { background-color: var(--color-border); color: var(--color-text); }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--spacing-sm));
+  right: 0; /* Alinha à direita do botão */
+  z-index: 100;
+  display: none;
+  min-width: 200px; /* Largura mínima ajustada */
+  background-color: var(--color-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg); /* Sombra mais pronunciada */
+  border: 1px solid var(--color-border);
+  list-style: none;
+  padding: var(--spacing-sm) 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.dropdown.show .dropdown-menu { /* Usa classe 'show' para controle JS */
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: block;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  color: var(--color-dark); /* Texto mais escuro */
+  text-decoration: none;
+  font-size: 0.95rem; /* Um pouco maior */
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-light); /* Fundo mais claro no hover */
+  color: var(--color-primary); /* Cor primária no texto do hover */
+}
+
+.dropdown-divider {
+  height: 1px;
+  margin: var(--spacing-sm) 0;
+  background-color: var(--color-border);
+  border: 0;
+}
+
+
+/* ===== ALERTAS E MENSAGENS (Toasts/Notifications) ===== */
+.notification {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-md);
+    position: fixed;
+    bottom: var(--spacing-xl);
+    right: var(--spacing-xl);
+    z-index: 1000;
+    transition: all var(--transition-smooth);
+    opacity: 0;
+    transform: translateY(20px);
+}
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification.info {
+    background-color: var(--color-info);
+    color: white;
+}
+.notification.info .fas {
+    color: white;
+}
+.notification.success {
+    background-color: var(--color-success);
+    color: white;
+}
+.notification.success .fas {
+    color: white;
+}
+.notification.error {
+    background-color: var(--color-error);
+    color: white;
+}
+.notification.error .fas {
+    color: white;
+}
+.notification.warning {
+    background-color: var(--color-warning);
+    color: var(--color-dark);
+}
+.notification.warning .fas {
+    color: var(--color-dark);
+}

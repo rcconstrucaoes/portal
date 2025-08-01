@@ -1,0 +1,182 @@
+/**
+ * RC Construções - Estilos de Responsividade
+ * Versão 5.1 - Revisado e Aprimorado
+ *
+ * Centraliza as regras de media query para garantir que o layout da aplicação
+ * se adapte a diferentes tamanhos de tela (mobile, tablet, desktop).
+ * Complementa os estilos de responsividade já definidos em outros arquivos CSS.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS (para alinhamento com a paleta de cores) ===== */
+/* As variáveis são importadas implicitamente de modern_main_css.css e components.css */
+:root {
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+    --radius-md: 8px;
+}
+
+/* ===== BREAKPOINTS PADRÃO ===== */
+/* Para dispositivos mobile pequenos */
+/* @media (max-width: 480px) { ... } */
+
+/* Para tablets e mobile grandes */
+@media (max-width: 768px) {
+    /* Layout do aplicativo */
+    .app-container {
+        flex-direction: column; /* Sidebar e conteúdo se empilham */
+    }
+    .sidebar {
+        width: 100%;
+        min-width: auto;
+        height: auto;
+        position: static; /* Não é mais sticky */
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    .sidebar.collapsed {
+        width: 100%;
+    }
+    .sidebar-header {
+        display: none; /* Esconde a logo em mobile */
+    }
+    .sidebar .nav-menu {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+    .sidebar .nav-item {
+        margin-bottom: 0;
+    }
+    .sidebar .nav-item .nav-link {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-sm);
+        border-radius: var(--radius-md);
+        text-align: center;
+    }
+    .sidebar .nav-item .nav-link span {
+        display: block; /* Garante que o texto seja exibido */
+        font-size: 0.75rem; /* Fonte menor para caber */
+    }
+    .sidebar .nav-item .nav-link .fas {
+        font-size: 1.1rem;
+        width: auto;
+    }
+    .main-content {
+        padding-top: var(--spacing-lg);
+    }
+    .page-container {
+        padding: 0 var(--spacing-md);
+    }
+
+    /* Dashboard e componentes */
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--spacing-lg);
+        gap: var(--spacing-md);
+    }
+    .dashboard-header h3 {
+        font-size: 1.5rem;
+    }
+    .filter-controls {
+        flex-direction: column;
+        width: 100%;
+        gap: var(--spacing-md);
+    }
+    .filter-controls > * {
+        width: 100%;
+    }
+    .date-range-picker {
+        width: 100%;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr; /* Apenas uma coluna para mobile */
+    }
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    .charts-grid .chart-container.large {
+        grid-column: auto;
+    }
+    .dashboard-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Tabelas */
+    .table-container {
+        overflow-x: auto;
+    }
+    .table {
+        min-width: 600px; /* Garante que a tabela não fique espremida */
+    }
+    .table-pagination {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md);
+    }
+}
+
+/* Para tablets grandes e laptops pequenos */
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Layout do aplicativo */
+    .sidebar {
+        width: 80px; /* Sidebar colapsada */
+        min-width: 80px;
+    }
+    .sidebar .nav-logo img {
+        max-height: 40px;
+    }
+    .sidebar .nav-item span {
+        display: none;
+    }
+    .sidebar .nav-link {
+        justify-content: center;
+    }
+    .main-content {
+        padding-left: calc(80px + var(--spacing-md)); /* Ajusta padding para a sidebar colapsada */
+    }
+    .page-container {
+        max-width: 900px; /* Adapta a largura máxima */
+    }
+
+    /* Dashboard e componentes */
+    .dashboard-header {
+        padding: var(--spacing-lg);
+        flex-wrap: wrap;
+    }
+    .dashboard-header h3 {
+        font-size: 1.75rem;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    .charts-grid .chart-container.large {
+        grid-column: auto;
+    }
+    .form-grid.three-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Para desktops e telas grandes */
+@media (min-width: 1025px) {
+    /* Layout padrão de desktop */
+    .sidebar {
+        width: 250px;
+    }
+    .main-content {
+        padding-left: calc(250px + var(--spacing-lg));
+    }
+}

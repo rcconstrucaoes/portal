@@ -1,0 +1,164 @@
+# RC Construções - Docker Compose para Desenvolvimento
+# Versão 5.1 - Revisado e Aprimorado
+
+# Este arquivo define e orquestra a aplicação RC Construções para um ambiente de desenvolvimento.
+# Ele configura o backend, frontend, banco de dados (PostgreSQL) e cache (Redis).
+# Todas as variáveis de ambiente são carregadas do ambiente host ou de um arquivo .env.
+# Utilize 'docker compose up -d' para iniciar em modo detached.
+
+version: '3.8' # Usando a versão 3.8 do Docker Compose
+
+services:
+  # ==================== Serviço de Banco de Dados (PostgreSQL) ====================
+  db:
+    container_name: rc_db_dev
+    image: postgres:13-alpine # Imagem oficial do PostgreSQL, versão Alpine é menor
+    restart: unless-stopped # Reinicia a menos que seja parado manualmente
+    environment:
+      # Credenciais do banco de dados para desenvolvimento
+      POSTGRES_DB: ${DB_NAME_DEV:-rc_construcoes_dev} # Usa variável de ambiente ou padrão
+      POSTGRES_USER: ${DB_USER_DEV:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_DEV:-docker}
+      PGDATA: /var/lib/postgresql/data/pgdata # Caminho para os dados dentro do container
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data/pgdata # Volume persistente para os dados do DB
+      # Opcional: Montar scripts SQL de inicialização para desenvolvimento
+      # - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432" # Mapeia a porta do DB para o host (para acesso externo ou ferramentas de DB)
+    networks:
+      - rc_network_dev # Conecta ao network interno da aplicação
+    healthcheck: # Verifica a saúde do banco de dados
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER_DEV:-postgres} -d ${DB_NAME_DEV:-rc_construcoes_dev}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s # Espera 5s antes de começar as verificações
+
+  # ==================== Serviço de Cache (Redis) ====================
+  redis:
+    container_name: rc_redis_dev
+    image: redis:6-alpine # Imagem oficial do Redis, versão Alpine é menor
+    restart: unless-stopped
+    environment:
+      # Senha do Redis para desenvolvimento (opcional)
+      REDIS_PASSWORD: ${REDIS_PASSWORD_DEV:-} # Vazio por padrão em dev, mas pode ser definido
+    # Adiciona a senha se a variável de ambiente REDIS_PASSWORD_DEV estiver definida
+    command: ${REDIS_PASSWORD_DEV:+redis-server --requirepass ${REDIS_PASSWORD_DEV}} # Condicionalmente adiciona a senha
+    volumes:
+      - redisdata_dev:/data # Volume persistente para os dados do Redis
+    ports:
+      - "6379:6379" # Mapeia a porta do Redis para o host
+    networks:
+      - rc_network_dev
+    healthcheck: # Verifica a saúde do Redis
+      test: ["CMD", "redis-cli", "${REDIS_PASSWORD_DEV:+-a}", "${REDIS_PASSWORD_DEV:-}", "ping"] # Testa com senha se definida
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+
+  # ==================== Serviço de Backend (Node.js/Express) ====================
+  backend:
+    container_name: rc_backend_dev
+    build:
+      context: ./backend # Caminho para o diretório do seu backend
+      dockerfile: Dockerfile.backend # O Dockerfile específico para o backend
+      args: # Argumentos de build para desenvolvimento
+        NODE_ENV: development
+    command: npm run dev # Executa 'npm run dev' para hot-reloading (nodemon)
+    restart: unless-stopped
+    environment:
+      # Variáveis de ambiente para o backend em desenvolvimento
+      NODE_ENV: development
+      PORT: 3000 # Porta interna do container do backend
+      DB_DIALECT: postgres
+      DB_HOST: db # Nome do serviço do banco de dados no Docker Compose network
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME_DEV:-rc_construcoes_dev}
+      DB_USER: ${DB_USER_DEV:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD_DEV:-docker}
+      DB_SSL: ${DB_SSL_DEV:-false} # SSL desabilitado por padrão em dev
+      DB_SSL_REJECT_UNAUTHORIZED: ${DB_SSL_REJECT_UNAUTHORIZED_DEV:-false}
+
+      JWT_SECRET: ${JWT_SECRET_DEV:-development-secret} # Chave secreta JWT para dev
+      REDIS_HOST: redis # Nome do serviço Redis no Docker Compose network
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD_DEV:-} # Senha para Redis, se definida
+      REDIS_DB: ${REDIS_DB_DEV:-0}
+      REDIS_ENABLED: ${REDIS_ENABLED_DEV:-true} # Ativa Redis no backend em dev
+
+      LOG_LEVEL: ${LOG_LEVEL_DEV:-debug} # Nível de log para desenvolvimento (debug)
+      RATE_LIMIT_GLOBAL_MAX: ${RATE_LIMIT_GLOBAL_MAX_DEV:-500} # Limites de rate limit mais permissivos para dev
+      AUTH_API_RATE_LIMIT_MAX: ${AUTH_API_RATE_LIMIT_MAX_DEV:-2000}
+
+      CORS_ORIGIN: ${CORS_ORIGIN_DEV:-http://localhost:8080} # Origem permitida para CORS em dev
+      TRUST_PROXY_COUNT: ${TRUST_PROXY_COUNT_DEV:-0} # Geralmente 0 em dev sem proxy
+
+      DB_BACKUP_ENABLED: ${DB_BACKUP_ENABLED_DEV:-false} # Backups desabilitados em dev
+      CLOUD_SYNC_PULL_ENDPOINT: ${CLOUD_SYNC_PULL_ENDPOINT_DEV:-} # Endpoints de sync/analytics para dev
+      CLOUD_SYNC_PUSH_ENDPOINT: ${CLOUD_SYNC_PUSH_ENDPOINT_DEV:-}
+      ANALYTICS_ENDPOINT: ${ANALYTICS_ENDPOINT_DEV:-}
+      ERROR_REPORT_ENDPOINT: ${ERROR_REPORT_ENDPOINT_DEV:-}
+
+    volumes:
+      - ./backend:/app # Mapeia o código-fonte do backend para o container para hot-reloading
+      - /app/node_modules # Evita que o node_modules local sobrescreva o do container
+      - backend_logs_dev:/app/logs # Volume para logs do backend (opcional, para persistir entre restarts)
+      - backend_uploads_dev:/app/uploads # Volume para uploads de arquivos em dev
+      - backend_backups_dev:/app/backups # Volume para backups do DB em dev
+    ports:
+      - "3000:3000" # Mapeia a porta do backend para o host
+      - "9229:9229" # Porta para depuração (Node.js inspect)
+    networks:
+      - rc_network_dev
+    depends_on:
+      db:
+        condition: service_healthy # Espera o DB estar saudável
+      redis:
+        condition: service_healthy # Espera o Redis estar saudável
+    # Limites de recursos para desenvolvimento (menos restritivos)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0' # Mais CPU para desenvolvimento
+          memory: 1024MB # Mais RAM
+
+  # ==================== Serviço de Frontend (servido diretamente pelo Node.js dev server ou Nginx dev) ====================
+  frontend:
+    container_name: rc_frontend_dev
+    build:
+      context: ./rc-construcoes-web # Caminho para o diretório do seu frontend
+      dockerfile: ../docker/Dockerfile.frontend # O Dockerfile específico para o frontend
+      args:
+        NODE_ENV: development
+    command: npm start # Ou o comando para iniciar seu servidor de desenvolvimento (ex: 'npm run serve')
+    restart: unless-stopped
+    environment:
+      # Variáveis de ambiente para o frontend em desenvolvimento
+      VUE_APP_API_URL: http://localhost:3000/api # URL da API do backend no host
+      VUE_APP_WEBSOCKET_URL: ws://localhost:3000 # URL do WebSocket
+      # Outras variáveis específicas do frontend
+    volumes:
+      - ./rc-construcoes-web:/app # Mapeia o código-fonte do frontend para o container
+      - /app/node_modules # Evita que o node_modules local sobrescreva o do container
+    ports:
+      - "8080:8080" # Mapeia a porta do servidor de desenvolvimento do frontend
+    networks:
+      - rc_network_dev
+    depends_on:
+      backend:
+        condition: service_started # Frontend precisa do backend para as chamadas de API
+
+# ==================== Networks ====================
+networks:
+  rc_network_dev:
+    driver: bridge # Rede interna para comunicação entre containers
+
+# ==================== Volumes Persistentes ====================
+volumes:
+  pgdata_dev: # Dados do PostgreSQL
+  redisdata_dev: # Dados do Redis
+  backend_logs_dev: # Logs da aplicação backend em dev
+  backend_uploads_dev: # Arquivos de upload em dev
+  backend_backups_dev: # Backups do DB em dev

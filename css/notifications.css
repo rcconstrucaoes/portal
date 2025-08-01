@@ -1,0 +1,186 @@
+/**
+ * RC Construções - Estilos para Notificações e Alertas
+ * Versão 5.1 - Revisado e Aprimorado
+ *
+ * Define a aparência e o comportamento de notificações de sistema,
+ * como toasts, alertas e mensagens de status offline.
+ * Integrado com a paleta de cores da aplicação.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS (para alinhamento com a paleta de cores) ===== */
+/* As variáveis são importadas implicitamente de modern_main_css.css e components.css */
+:root {
+    /* Cores */
+    --color-primary: #f58220;
+    --color-secondary: #1a3a6c;
+    --color-dark: #2d3748;
+    --color-text: #4a5568;
+    --color-light: #f7fafc;
+    --color-success: #28a745;
+    --color-error: #dc3545;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+
+    /* Espaçamento e Borda */
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --radius-md: 8px;
+
+    /* Sombras */
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    
+    /* Transições */
+    --transition-smooth: all 0.3s ease-in-out;
+}
+
+/* ===== ESTILO BASE DAS NOTIFICAÇÕES (Gerais, como toasts ou offline) ===== */
+.notification {
+    position: fixed;
+    bottom: var(--spacing-xl);
+    right: var(--spacing-xl);
+    z-index: 1000;
+    
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    
+    font-size: 0.95rem;
+    font-weight: 500;
+    
+    opacity: 0;
+    transform: translateY(20px);
+    visibility: hidden;
+    transition: opacity var(--transition-smooth), transform var(--transition-smooth), visibility var(--transition-smooth);
+}
+
+/* Estilo para mostrar a notificação */
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+/* ===== CORES DOS TIPOS DE NOTIFICAÇÃO ===== */
+.notification.info {
+    background-color: var(--color-info);
+    color: #fff;
+}
+.notification.info .fas {
+    color: #fff;
+}
+
+.notification.success {
+    background-color: var(--color-success);
+    color: #fff;
+}
+.notification.success .fas {
+    color: #fff;
+}
+
+.notification.warning {
+    background-color: var(--color-warning);
+    color: var(--color-dark);
+}
+.notification.warning .fas {
+    color: var(--color-dark);
+}
+
+.notification.error {
+    background-color: var(--color-error);
+    color: #fff;
+}
+.notification.error .fas {
+    color: #fff;
+}
+
+/* ===== ESTILO ESPECÍFICO PARA A MENSAGEM OFFLINE ===== */
+#offline-notification {
+    /* Sobrescreve as configurações de posição para o bottom-center em mobile */
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    right: auto;
+    
+    background-color: var(--color-secondary); /* Azul da marca para notificação offline */
+    color: var(--color-light);
+    
+    /* Z-index extra para garantir que fique acima de outros elementos fixos */
+    z-index: 1001; 
+}
+
+#offline-notification.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+
+/* ===== ESTILOS PARA ALERTS E MODAIS (se SweetAlert2 for o fallback) ===== */
+/* Estes estilos podem ser customizados para alinhar com o design do seu site */
+/* Se você usar SweetAlert2, ele já tem seus próprios estilos, mas você pode
+   ajustar variáveis ou overrides aqui. */
+.swal2-container {
+    font-family: var(--font-family-base);
+}
+
+.swal2-popup {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    background-color: var(--color-light);
+}
+
+.swal2-title {
+    color: var(--color-dark);
+    font-weight: 700;
+}
+
+.swal2-content {
+    color: var(--color-text);
+}
+
+.swal2-confirm, .swal2-cancel {
+    border-radius: var(--radius-md);
+    font-weight: 600;
+}
+
+/* Cores dos botões de confirmação do SweetAlert */
+.swal2-confirm {
+    background-color: var(--color-primary) !important;
+}
+.swal2-confirm:focus {
+    box-shadow: 0 0 0 3px var(--color-focus-ring) !important;
+}
+
+.swal2-cancel {
+    background-color: var(--color-secondary) !important;
+    color: var(--color-light) !important;
+}
+
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+    .notification {
+        bottom: var(--spacing-md);
+        right: var(--spacing-md);
+        left: var(--spacing-md);
+        transform: translateY(10px);
+        font-size: 0.85rem;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .notification.show {
+        transform: translateY(0);
+    }
+    
+    #offline-notification {
+        /* Garante que o offline também se ajuste */
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        transform: translateX(0) translateY(10px);
+    }
+}

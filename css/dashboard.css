@@ -1,0 +1,659 @@
+/**
+ * RC Construções - Dashboard Moderno FINAL (Revisado e Aprimorado)
+ * Este arquivo CSS é o coração do design do seu dashboard.
+ * Totalmente reestruturado para ser mais profissional, responsivo, robusto e visualmente atraente,
+ * mantendo compatibilidade e todas as funcionalidades existentes.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS - BASEADO NO STYLE.CSS PARA CONSISTÊNCIA ===== */
+/* As variáveis foram definidas em modern_main_css.css e são importadas implicitamente.
+   Elas são repetidas aqui para clareza e caso este arquivo seja usado isoladamente. */
+:root {
+    /* Cores Principais */
+    --color-primary: #f58220; /* Laranja RC */
+    --color-primary-dark: #d46f1a; /* Laranja RC mais escuro para hover/ativos */
+    --color-secondary: #1a3a6c; /* Azul Acinzentado RC */
+    --color-dark: #2d3748; /* Cor para textos e elementos escuros (títulos, valores) */
+    --color-light: #f7fafc; /* Cor de fundo clara para cards e seções */
+    --color-text: #4a5568; /* Cor padrão para textos gerais */
+    --color-border: #e2e8f0; /* Cor para bordas sutis e divisores */
+    --color-bg-app: #eef2f6; /* Fundo geral do aplicativo para um visual suave */
+
+    /* Cores de Estado - Alinhadas com style.css */
+    --color-success: #28a745; /* Verde sucesso */
+    --color-success-light: rgba(40, 167, 69, 0.2); /* Verde sucesso mais claro para sombras/foco */
+    --color-error: #dc3545; /* Vermelho erro */
+    --color-error-light: rgba(220, 53, 69, 0.2); /* Vermelho erro mais claro para sombras/foco */
+    --color-warning: #ffc107; /* Amarelo alerta */
+    --color-warning-light: rgba(255, 193, 7, 0.2); /* Amarelo alerta mais claro */
+    --color-info: #17a2b8; /* Azul info */
+    --color-info-light: rgba(23, 162, 184, 0.2); /* Azul info mais claro */
+    --color-focus-ring: rgba(245, 130, 32, 0.5); /* Anel de foco (transparente laranja) */
+
+    /* Fontes */
+    --font-family-base: 'Inter', sans-serif;
+    --font-size-base: 16px; /* Tamanho base da fonte para fácil escalabilidade */
+
+    /* Espaçamento - Padronizado e escalável */
+    --spacing-xs: 0.25rem;  /* 4px */
+    --spacing-sm: 0.5rem;   /* 8px */
+    --spacing-md: 1rem;     /* 16px */
+    --spacing-lg: 1.5rem;   /* 24px */
+    --spacing-xl: 2rem;     /* 32px */
+    --spacing-xxl: 3rem;    /* 48px */
+
+    /* Raio da Borda (Border Radius) - Padronizado para suavidade */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px; /* Para pílulas/círculos */
+
+    /* Sombras (Box Shadows) - Mais elegantes e sutis */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.12), 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.05);
+
+    /* Gradientes modernos (Atualizados para usar as novas variáveis de cor) */
+    --primary-gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    --success-gradient: linear-gradient(135deg, var(--color-success) 0%, color-mix(in srgb, var(--color-success) 80%, black) 100%);
+    --warning-gradient: linear-gradient(135deg, var(--color-warning) 0%, color-mix(in srgb, var(--color-warning) 80%, black) 100%);
+    --danger-gradient: linear-gradient(135deg, var(--color-error) 0%, color-mix(in srgb, var(--color-error) 80%, black) 100%);
+    --info-gradient: linear-gradient(135deg, var(--color-info) 0%, color-mix(in srgb, var(--color-info) 80%, black) 100%);
+    
+    /* Transições suaves para interatividade */
+    --transition-fast: 0.2s ease-out;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+
+/* ===== LAYOUT GERAL DO DASHBOARD ===== */
+/* Ajuste o container principal para melhor espaçamento e centralização */
+.page-container {
+    max-width: 1200px; /* Aumenta a largura máxima para mais espaço */
+    margin: var(--spacing-xxl) auto; /* Margem superior e inferior, auto para centralizar */
+    padding: 0 var(--spacing-lg); /* Padding lateral consistente */
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl); /* Espaçamento entre as seções do dashboard */
+}
+
+/* ===== DASHBOARD HEADER - Mais imponente e informativo ===== */
+.dashboard-header {
+    background: var(--color-light); /* Fundo claro para o cabeçalho */
+    border-radius: var(--radius-xl); /* Cantos mais arredondados */
+    box-shadow: var(--shadow-md); /* Sombra mais destacada */
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-xxl); /* Padding generoso */
+    margin-bottom: var(--spacing-xxl); /* Espaçamento robusto abaixo do header */
+    position: relative;
+    overflow: hidden;
+    display: flex; /* Flexbox para alinhar título e date picker */
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+    gap: var(--spacing-lg); /* Espaçamento entre itens flex */
+}
+.dashboard-header .header-description {
+    font-size: 0.95rem;
+    color: var(--color-text);
+}
+
+/* Linha decorativa superior */
+.dashboard-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px; /* Linha mais espessa */
+    background: var(--primary-gradient); /* Gradiente vibrante */
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0; /* Apenas nos cantos superiores */
+}
+
+.dashboard-header h3 {
+    font-size: 2.25rem; /* Título maior e mais impactante */
+    font-weight: 800; /* Mais negrito */
+    margin: 0;
+    line-height: 1.2;
+    color: var(--color-secondary); /* Usa o azul acinzentado para o título principal */
+}
+
+/* ===== DATE RANGE PICKER - Integrado e elegante ===== */
+.date-range-picker {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm); /* Espaçamento entre os elementos */
+    background: var(--color-light);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    transition: var(--transition-smooth);
+    flex-wrap: wrap; /* Garante responsividade */
+}
+
+.date-range-picker:hover {
+    box-shadow: var(--shadow-xs); /* Sombra sutil no hover */
+}
+
+.date-range-picker span {
+    font-size: 0.9rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.date-range-picker input[type="date"] {
+    background: var(--color-light);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm); /* Padding menor para input */
+    font-size: 0.9rem;
+    color: var(--color-dark);
+    transition: var(--transition-fast);
+    appearance: none; /* Remove estilos padrão do navegador */
+    cursor: pointer;
+}
+
+.date-range-picker input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(30%) sepia(80%) saturate(2000%) hue-rotate(340deg) brightness(90%) contrast(100%); /* Cor do ícone do calendário para laranja */
+}
+
+.date-range-picker input[type="date"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* ===== ESTATÍSTICAS - GRID DINÂMICO E CARDS MELHORADOS ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Colunas flexíveis */
+    gap: var(--spacing-lg); /* Espaçamento entre os cards de estatística */
+    margin-bottom: var(--spacing-xxl); /* Espaçamento robusto abaixo do grid de stats */
+}
+
+.stat-card {
+    position: relative;
+    background: var(--color-light);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl); /* Cantos mais arredondados */
+    box-shadow: var(--shadow-sm); /* Sombra mais suave */
+    border: 1px solid var(--color-border);
+    transition: var(--transition-smooth);
+    overflow: hidden;
+    cursor: pointer;
+    display: flex; /* Flexbox para o conteúdo interno */
+    flex-direction: column;
+    justify-content: space-between; /* Espaço entre label e valor */
+    align-items: flex-start; /* Alinha texto à esquerda */
+}
+
+/* Linha superior colorida - Mais discreta e elegante */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px; /* Mais fino */
+    background: var(--primary-gradient);
+    transition: var(--transition-fast);
+}
+
+/* Efeito de hover elevado e com sombra */
+.stat-card:hover {
+    transform: translateY(-5px); /* Menor elevação */
+    box-shadow: var(--shadow-md); /* Sombra mais pronunciada no hover */
+}
+
+/* Efeito de preenchimento da linha no hover */
+.stat-card:hover::before {
+    height: 100%;
+    opacity: 0.08; /* Mais transparente para um toque sutil */
+}
+
+/* Cores específicas por tipo para a linha */
+.stat-card.success::before { background: var(--success-gradient); }
+.stat-card.warning::before { background: var(--warning-gradient); }
+.stat-card.danger::before { background: var(--danger-gradient); }
+.stat-card.info::before { background: var(--info-gradient); }
+
+/* Ícones com animação e estilo mais limpo */
+.stat-card .stat-icon {
+    font-size: 2.75rem; /* Ícone maior */
+    margin-bottom: var(--spacing-md);
+    opacity: 0.7; /* Mais suave */
+    transition: var(--transition-smooth);
+    color: var(--color-primary); /* Cor padrão para ícones */
+}
+
+.stat-card:hover .stat-icon {
+    opacity: 1;
+    transform: scale(1.1) rotate(2deg); /* Animação mais suave */
+}
+
+/* Cores específicas dos ícones */
+.stat-card.success .stat-icon { color: var(--color-success); }
+.stat-card.warning .stat-icon { color: var(--color-warning); }
+.stat-card.danger .stat-icon { color: var(--color-error); }
+.stat-card.info .stat-icon { color: var(--color-info); }
+
+/* Valores com tipografia moderna e destacada */
+.stat-card .stat-value {
+    font-size: 2.5rem; /* Valor maior e mais legível */
+    font-weight: 800; /* Extremamente negrito */
+    margin-bottom: var(--spacing-xs); /* Espaçamento menor */
+    color: var(--color-dark);
+    letter-spacing: -0.03em; /* Mais apertado */
+}
+
+.stat-card .stat-label {
+    font-size: 0.95rem; /* Texto um pouco maior */
+    font-weight: 600;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em; /* Espaçamento de letras */
+    opacity: 0.9;
+}
+
+/* ===== GRÁFICOS - Containers Visualmente Atraentes ===== */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Colunas flexíveis */
+    grid-auto-flow: dense; /* Permite que os itens ocupem o espaço disponível */
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xxl);
+}
+
+/* Adiciona classes para gráficos maiores */
+.charts-grid .chart-container.large {
+    grid-column: span 2; /* Ocupa 2 colunas */
+}
+
+.chart-container {
+    background: var(--color-light);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl); /* Cantos mais arredondados */
+    box-shadow: var(--shadow-sm); /* Sombra suave */
+    border: 1px solid var(--color-border);
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Linha decorativa no topo dos gráficos */
+.chart-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px; /* Linha mais espessa */
+    background: var(--primary-gradient);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.chart-container:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md); /* Sombra mais pronunciada no hover */
+}
+
+.chart-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.chart-header h4 {
+    margin: 0 0 var(--spacing-xs) 0;
+    font-size: 1.25rem; /* Título do gráfico maior */
+    font-weight: 700;
+    color: var(--color-dark);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+.chart-header .chart-description {
+    font-size: 0.85rem;
+    color: var(--color-text);
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* Exemplo de ícones nos títulos dos gráficos */
+.chart-header h4 .fas {
+    font-size: 1rem;
+    color: var(--color-primary);
+}
+
+
+/* ===== ATIVIDADES E RESUMO RÁPIDO - Seções Mais Limpas ===== */
+.dashboard-bottom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Duas colunas para atividades e resumo */
+    gap: var(--spacing-lg);
+}
+
+.recent-activities,
+.quick-summary {
+    background: var(--color-light);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl); /* Cantos mais arredondados */
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    transition: var(--transition-smooth);
+}
+
+.recent-activities:hover,
+.quick-summary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.recent-activities h4,
+.quick-summary h4 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: 0 0 var(--spacing-lg) 0;
+    font-size: 1.25rem; /* Título maior */
+    font-weight: 700;
+    color: var(--color-dark);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px dashed var(--color-border); /* Linha pontilhada sutil */
+}
+
+.recent-activities ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.recent-activities li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-border);
+    transition: var(--transition-smooth);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    color: var(--color-text);
+}
+
+.recent-activities li:hover {
+    background-color: var(--color-light); /* Background sutil no hover */
+    margin: 0 calc(-1 * var(--spacing-xl)); /* Estende o hover para as bordas */
+    padding-left: var(--spacing-xl);
+    padding-right: var(--spacing-xl);
+    transform: translateX(4px); /* Desliza ligeiramente */
+}
+
+.recent-activities li:last-child {
+    border-bottom: none;
+}
+
+/* Ícones de atividade */
+.recent-activities li .activity-icon {
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+.recent-activities li.success .activity-icon { color: var(--color-success); }
+.recent-activities li.danger .activity-icon { color: var(--color-error); }
+.recent-activities li.info .activity-icon { color: var(--color-info); }
+
+
+/* ===== SUMMARY ITEMS MODERNOS E INTERATIVOS ===== */
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg); /* Padding para melhor visual */
+    margin-bottom: var(--spacing-sm);
+    background: var(--color-light);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border); /* Borda sutil */
+    transition: var(--transition-smooth);
+    cursor: pointer;
+}
+
+.summary-item:hover {
+    background: var(--color-light);
+    box-shadow: var(--shadow-xs);
+    transform: translateX(4px);
+}
+
+.summary-item .summary-label {
+    color: var(--color-text);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.summary-item .summary-value {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--color-dark);
+}
+
+/* Cores para valores de resumo */
+.summary-item.positive .summary-value { color: var(--color-success); }
+.summary-item.negative .summary-value { color: var(--color-error); }
+.summary-item.neutral .summary-value { color: var(--color-info); }
+
+
+/* ===== ANIMAÇÕES DE ENTRADA (Refinadas) ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px); /* Movimento mais suave */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px); /* Movimento mais suave */
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.03); /* Pulso mais sutil */
+    }
+}
+
+/* Aplicar animações com delays */
+.dashboard-header { animation: fadeInUp 0.7s ease-out forwards; } /* Header com animação */
+.stats-grid { animation: fadeInUp 0.7s ease-out 0.2s forwards; } /* Grid de stats atrasado */
+.charts-grid .chart-container { animation: slideInLeft 0.7s ease-out forwards; } /* Gráficos deslizam individualmente */
+.dashboard-bottom-grid { animation: fadeInUp 0.7s ease-out 0.4s forwards; } /* Seções de baixo atrasadas */
+
+/* Atrasos sequenciais para elementos individuais */
+.stats-grid .stat-card {
+    opacity: 0; /* Começa invisível para a animação */
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+.stats-grid .stat-card:nth-child(1) { animation-delay: 0.3s; }
+.stats-grid .stat-card:nth-child(2) { animation-delay: 0.4s; }
+.stats-grid .stat-card:nth-child(3) { animation-delay: 0.5s; }
+.stats-grid .stat-card:nth-child(4) { animation-delay: 0.6s; }
+
+/* Atrasos sequenciais para cada gráfico */
+.charts-grid .chart-container:nth-child(1) { animation-delay: 0.7s; }
+.charts-grid .chart-container:nth-child(2) { animation-delay: 0.8s; }
+.charts-grid .chart-container:nth-child(3) { animation-delay: 0.9s; }
+
+/* ===== LOADING STATES (Melhorado) ===== */
+.stat-card.loading {
+    background: linear-gradient(90deg, var(--color-light) 25%, var(--color-border) 50%, var(--color-light) 75%); /* Cores mais suaves para shimmer */
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Placeholder para conteúdo de carregamento */
+.loading-placeholder-row, .loading-placeholder-row-compact {
+    animation: shimmer 1.5s infinite;
+    background: linear-gradient(90deg, var(--color-light) 25%, var(--color-border) 50%, var(--color-light) 75%);
+    background-size: 200% 100%;
+}
+.loading-placeholder {
+    background-color: var(--color-border);
+    border-radius: var(--radius-sm);
+    height: 1em;
+    margin-bottom: var(--spacing-sm);
+    animation: shimmer 1.5s infinite;
+    opacity: 0.7;
+}
+.loading-placeholder.large { height: 1.5em; width: 80%; }
+.loading-placeholder.medium { width: 60%; }
+.loading-placeholder.small { width: 40%; }
+.loading-placeholder.small-circle { height: 1em; width: 1em; border-radius: 50%; }
+
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+
+/* ===== RESPONSIVIDADE OTIMIZADA ===== */
+
+/* Tablets e Laptops menores */
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: 1fr; /* Um gráfico por linha em telas médias */
+    }
+    .charts-grid .chart-container.large {
+        grid-column: auto; /* Reseta o span para que todos os gráficos ocupem 1 coluna */
+    }
+    .dashboard-bottom-grid {
+        grid-template-columns: 1fr; /* Uma coluna para as seções de baixo */
+    }
+    .page-container {
+        padding: 0 var(--spacing-md); /* Reduz padding lateral */
+    }
+    .dashboard-header .filter-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    .filter-controls > * {
+        width: 100%;
+        margin-bottom: var(--spacing-md);
+    }
+}
+
+/* Smartphones e Tablets pequenos */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: var(--spacing-xl); /* Reduz padding do header */
+    }
+    .dashboard-header h3 {
+        font-size: 1.8rem; /* Título um pouco menor */
+    }
+    .date-range-picker {
+        width: 100%; /* Ocupa largura total */
+        justify-content: center; /* Centraliza itens */
+    }
+    .stats-grid {
+        grid-template-columns: 1fr; /* Uma coluna por stat card */
+    }
+    .stat-card {
+        padding: var(--spacing-lg); /* Reduz padding do stat card */
+        flex-direction: row; /* Coloca ícone e texto lado a lado */
+        align-items: center;
+        text-align: left;
+        gap: var(--spacing-lg);
+    }
+    .stat-card .stat-icon {
+        margin-bottom: 0; /* Remove margem de baixo */
+    }
+    .stat-card .stat-content {
+        display: flex;
+        flex-direction: column;
+    }
+    .chart-container {
+        padding: var(--spacing-lg);
+    }
+    .recent-activities,
+    .quick-summary {
+        padding: var(--spacing-lg);
+    }
+    .summary-item {
+        flex-direction: column; /* Itens do resumo empilhados */
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-md);
+    }
+    .summary-item .summary-value {
+        font-size: 1.05rem;
+    }
+}
+
+/* Smartphones muito pequenos */
+@media (max-width: 480px) {
+    .page-container {
+        padding: 0 var(--spacing-sm); /* Padding mínimo */
+    }
+    .dashboard-header h3 {
+        font-size: 1.5rem;
+    }
+    .stat-card .stat-value {
+        font-size: 2rem;
+    }
+    .stat-card .stat-icon {
+        font-size: 2.2rem;
+    }
+    .chart-header h4 {
+        font-size: 1.1rem;
+    }
+    .recent-activities h4,
+    .quick-summary h4 {
+        font-size: 1.1rem;
+    }
+}
+
+/* ===== MELHORIAS DE ACESSIBILIDADE ===== */
+.stat-card:focus-visible,
+.summary-item:focus-visible,
+.date-range-picker input[type="date"]:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px; /* Offset maior para visibilidade */
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* ===== EFEITOS ESPECIAIS (Sombra no Hover com Cor Específica) ===== */
+.stat-card.success:hover {
+    box-shadow: 0 10px 25px var(--color-success-light); /* Usando a variável light */
+}
+.stat-card.warning:hover {
+    box-shadow: 0 10px 25px var(--color-warning-light);
+}
+.stat-card.danger:hover {
+    box-shadow: 0 10px 25px var(--color-error-light);
+}
+.stat-card.info:hover {
+    box-shadow: 0 10px 25px var(--color-info-light);
+}

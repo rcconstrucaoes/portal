@@ -1,0 +1,381 @@
+/**
+ * RC Construções - modern_main_css.css (Revisado e Aprimorado)
+ * Este arquivo contém os estilos globais e a estrutura principal do aplicativo.
+ * Aprimorado para ser mais profissional, responsivo e robusto, mantendo as funcionalidades.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS (Custom Properties) - Alinhadas com style.css ===== */
+:root {
+    /* Cores Principais */
+    --color-primary: #f58220; /* Laranja RC */
+    --color-primary-dark: #d46f1a; /* Laranja RC mais escuro para hover/ativos */
+    --color-secondary: #1a3a6c; /* Azul Acinzentado RC */
+    --color-dark: #2d3748; /* Cor para textos e elementos escuros (títulos, valores) */
+    --color-light: #f7fafc; /* Cor de fundo clara para cards e seções */
+    --color-text: #4a5568; /* Cor padrão para textos gerais */
+    --color-border: #e2e8f0; /* Cor para bordas sutis e divisores */
+    --color-bg-app: #eef2f6; /* Fundo geral do aplicativo para um visual suave */
+
+    /* Cores de Estado - Alinhadas com style.css */
+    --color-success: #28a745; /* Verde sucesso */
+    --color-success-light: rgba(40, 167, 69, 0.2); /* Verde sucesso mais claro para sombras/foco */
+    --color-error: #dc3545; /* Vermelho erro */
+    --color-error-light: rgba(220, 53, 69, 0.2); /* Vermelho erro mais claro para sombras/foco */
+    --color-warning: #ffc107; /* Amarelo alerta */
+    --color-warning-light: rgba(255, 193, 7, 0.2); /* Amarelo alerta mais claro */
+    --color-info: #17a2b8; /* Azul info */
+    --color-info-light: rgba(23, 162, 184, 0.2); /* Azul info mais claro */
+    --color-focus-ring: rgba(245, 130, 32, 0.5); /* Anel de foco (transparente laranja) */
+
+    /* Fontes */
+    --font-family-base: 'Inter', sans-serif;
+    --font-size-base: 16px; /* Tamanho base da fonte para fácil escalabilidade */
+
+    /* Espaçamento - Padronizado e escalável */
+    --spacing-xs: 0.25rem;  /* 4px */
+    --spacing-sm: 0.5rem;   /* 8px */
+    --spacing-md: 1rem;     /* 16px */
+    --spacing-lg: 1.5rem;   /* 24px */
+    --spacing-xl: 2rem;     /* 32px */
+    --spacing-xxl: 3rem;    /* 48px */
+
+    /* Raio da Borda (Border Radius) - Padronizado para suavidade */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px; /* Para pílulas/círculos */
+
+    /* Sombras (Box Shadows) - Mais elegantes e sutis */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.12), 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.05);
+
+    /* Transições suaves para interatividade */
+    --transition-fast: 0.2s ease-out;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Curva de aceleração padrão material design */
+}
+
+/* ===== RESETS GLOBAIS E ESTILOS BASE (Baseado em style.css) ===== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: var(--font-size-base); /* Define a base para REMs */
+}
+
+body {
+    font-family: var(--font-family-base);
+    line-height: 1.6;
+    color: var(--color-text);
+    background-color: var(--color-bg-app); /* Fundo suave para todo o app */
+    -webkit-font-smoothing: antialiased; /* Suavização de fonte */
+    text-rendering: optimizeLegibility; /* Melhor renderização de texto */
+    min-height: 100vh; /* Garante que o body ocupa a altura total da viewport */
+    display: flex; /* Para centralizar o app-container se necessário */
+    flex-direction: column;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Remove espaço extra abaixo da imagem */
+}
+
+/* ===== ESTRUTURA PRINCIPAL DO APLICATIVO ===== */
+.app-container {
+    display: flex;
+    min-height: 100vh; /* Garante que o container do app ocupe a altura total */
+    width: 100%;
+    overflow: hidden; /* Para lidar com elementos fixos/absolutos */
+}
+
+/* Sidebar (Navegação Lateral) */
+.sidebar {
+    width: 250px; /* Largura padrão da sidebar */
+    min-width: 250px; /* Garante que não encolha demais */
+    background-color: var(--color-secondary); /* Azul escuro da marca */
+    color: var(--color-light);
+    box-shadow: var(--shadow-lg); /* Sombra para dar profundidade */
+    padding: var(--spacing-xl) var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    position: sticky; /* Fixa a sidebar na tela */
+    top: 0;
+    left: 0;
+    height: 100vh; /* Altura total da viewport */
+    overflow-y: auto; /* Adiciona scroll se o conteúdo for maior */
+    transition: width var(--transition-smooth); /* Para animação de colapso */
+    z-index: 100; /* Garante que fique acima de outros conteúdos */
+}
+
+/* Esconder sidebar (para versão colapsada ou mobile) */
+.sidebar.collapsed {
+    width: 80px; /* Largura reduzida para ícones apenas */
+    min-width: 80px;
+}
+
+.sidebar-header {
+    padding-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Divisor sutil */
+    text-align: center;
+}
+
+.nav-logo img {
+    max-height: 150px; /* Conforme o valor prioritário de 150px que você forneceu */
+    width: auto;
+    display: block;
+    margin: 0 auto; /* Centraliza a logo */
+    transition: all var(--transition-smooth);
+}
+.sidebar.collapsed .nav-logo img {
+    max-height: 40px; /* Reduz logo quando colapsada */
+}
+
+.nav-menu {
+    flex-grow: 1; /* Ocupa o espaço restante da sidebar */
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.nav-item .nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    color: #fff;
+    padding: var(--spacing-md);
+    font-weight: 500;
+    transition: color var(--transition-fast);
+}
+
+.nav-item .nav-link:hover,
+.nav-item.active .nav-link {
+    background-color: var(--color-primary); /* Fundo laranja no hover ou ativo */
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+    transform: translateX(5px); /* Desliza ligeiramente */
+}
+
+.nav-item .nav-link .fas {
+    font-size: 1.25rem;
+    width: 2rem; /* Garante que os ícones tenham a mesma largura */
+    text-align: center;
+}
+
+.nav-item .nav-link span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.main-content {
+    flex-grow: 1; /* Ocupa o restante do espaço horizontal */
+    padding: var(--spacing-lg); /* Espaçamento geral para o conteúdo principal */
+    background-color: var(--color-bg-app); /* Fundo suave para a área de conteúdo */
+    overflow-y: auto; /* Permite rolagem dentro do conteúdo principal */
+    transition: margin-left var(--transition-smooth); /* Para ajustar quando a sidebar colapsar */
+}
+
+.page-container {
+    padding: var(--spacing-lg); /* Padding interno para o conteúdo de cada página */
+    max-width: 1400px; /* Aumentado para dar mais espaço, alinhado com o site */
+    margin: 0 auto; /* Centraliza o conteúdo da página */
+}
+
+/* ===== OFFLINE NOTIFICATION ===== */
+#offline-notification {
+    background-color: var(--color-error);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-md);
+    position: fixed;
+    bottom: var(--spacing-xl);
+    right: var(--spacing-xl);
+    z-index: 1000;
+    display: flex; /* Garante que os ícones e texto estejam alinhados */
+    align-items: center;
+    gap: var(--spacing-sm);
+    transition: all var(--transition-smooth);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+#offline-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#offline-notification .fas {
+    color: white;
+}
+
+/* ===== RESPONSIVIDADE GERAL ===== */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 80px; /* Colapsa a sidebar em telas menores */
+        min-width: 80px;
+    }
+    .sidebar .nav-logo img {
+        max-height: 40px; /* Logo menor */
+    }
+    .sidebar .nav-item span {
+        display: none; /* Esconde texto dos itens de navegação */
+    }
+    .sidebar .nav-item {
+        justify-content: center; /* Centraliza ícones */
+    }
+    .main-content {
+        padding: var(--spacing-md); /* Reduz padding do conteúdo principal */
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column; /* Empilha sidebar e main content */
+    }
+    .sidebar {
+        position: static; /* Não fixa mais no topo em mobile */
+        width: 100%; /* Ocupa a largura total */
+        height: auto; /* Altura automática */
+        min-height: auto;
+        padding: var(--spacing-md) var(--spacing-lg);
+        box-shadow: var(--shadow-sm); /* Sombra mais sutil */
+        flex-direction: row; /* Itens da sidebar em linha */
+        justify-content: space-around; /* Distribui itens */
+        align-items: center;
+    }
+    .sidebar.collapsed {
+        width: 100%; /* Garante largura total em colapsado */
+    }
+    .sidebar .nav-logo {
+        display: none; /* Esconde logo em mobile */
+    }
+    .sidebar .nav-menu {
+        flex-direction: row; /* Menu de navegação em linha */
+        width: 100%;
+        justify-content: space-around;
+        padding: 0;
+    }
+    .sidebar .nav-item {
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-md);
+    }
+    .sidebar .nav-item span {
+        display: block; /* Mostra texto novamente, se houver espaço */
+        font-size: 0.75rem; /* Fonte menor para caber */
+    }
+    .sidebar .nav-item .fas {
+        font-size: 1.25rem;
+    }
+
+    .main-content {
+        padding: var(--spacing-md);
+    }
+    .page-container {
+        padding: 0; /* Remove padding extra no container da página em telas pequenas */
+    }
+
+    #offline-notification {
+        bottom: var(--spacing-md);
+        right: var(--spacing-md);
+        left: var(--spacing-md);
+        width: auto;
+        transform: translateY(10px);
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar .nav-item {
+        flex-direction: column; /* Empilha ícone e texto */
+        gap: var(--spacing-xs);
+    }
+}
+
+/* ===== ESTILOS PARA ELEMENTOS COMUNS ===== */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-dark);
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+    font-weight: 700;
+}
+
+p {
+    margin-bottom: var(--spacing-md);
+    line-height: 1.7;
+}
+
+/* Estilos de seleção de texto */
+::selection {
+    background: var(--color-primary);
+    color: white;
+}
+::-moz-selection {
+    background: var(--color-primary);
+    color: white;
+}
+
+/* Utilidade para placeholders de carregamento */
+.loading-placeholder {
+    background-color: var(--color-border);
+    border-radius: var(--radius-sm);
+    height: 1em;
+    margin-bottom: var(--spacing-sm);
+    opacity: 0.7;
+}
+.loading-placeholder.large { width: 80%; }
+.loading-placeholder.medium { width: 60%; }
+.loading-placeholder.small { width: 40%; }
+.loading-placeholder-report {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: var(--spacing-xxl);
+}
+.loading-spinner {
+    border: 4px solid var(--color-border);
+    border-top: 4px solid var(--color-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: var(--spacing-md);
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,160 @@
+/**
+ * RC Construções - Estilos para a Página de Relatórios
+ * Versão 5.1 - Revisado e Aprimorado
+ *
+ * Define a aparência e o comportamento dos elementos da central de relatórios,
+ * como o formulário de geração de relatórios, a área de visualização e os gráficos.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS (para alinhamento com a paleta de cores) ===== */
+/* As variáveis são importadas implicitamente de modern_main_css.css e components.css */
+:root {
+    /* Cores */
+    --color-primary: #f58220;
+    --color-primary-dark: #d46f1a;
+    --color-secondary: #1a3a6c;
+    --color-dark: #2d3748;
+    --color-text: #4a5568;
+    --color-border: #e2e8f0;
+    --color-light: #f7fafc;
+    --color-bg-app: #eef2f6;
+    --color-success: #28a745;
+    --color-error: #dc3545;
+    --color-info: #17a2b8;
+
+    /* Espaçamento e Borda */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* ===== LAYOUT GERAL DA PÁGINA DE RELATÓRIOS ===== */
+.reports-header {
+    margin-bottom: var(--spacing-xl);
+}
+
+/* ===== ESTILO DO FORMULÁRIO DE FILTROS ===== */
+.report-filters .card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.report-filters .card-body {
+    padding-top: var(--spacing-md);
+}
+
+.report-filters .form-grid {
+    margin-bottom: var(--spacing-lg);
+}
+
+.report-filters .date-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+.report-filters .date-range-inputs .date-separator {
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.report-filters .filter-actions {
+    margin-top: var(--spacing-lg);
+}
+.report-filters .filter-actions button {
+    min-width: 150px;
+}
+
+/* ===== ÁREA DE CONTEÚDO DO RELATÓRIO ===== */
+.report-content {
+    margin-top: var(--spacing-xl);
+}
+.report-content .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#report-output-area {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#report-output-area #initial-report-message {
+    font-style: italic;
+    color: var(--color-text);
+    opacity: 0.7;
+}
+
+/* Placeholder de carregamento (já definido em modern_main_css.css) */
+.loading-placeholder-report {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+.loading-spinner {
+    border: 4px solid rgba(245, 130, 32, 0.2);
+    border-top: 4px solid var(--color-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos para a tabela de resultados do relatório */
+.report-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.report-table-container .table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Estilos para o gráfico de resultados do relatório */
+.report-chart-container {
+    width: 100%;
+    max-height: 400px; /* Limita a altura do gráfico para melhor visualização */
+}
+
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+    .report-filters .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .report-filters .date-range-inputs {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    .report-filters .date-range-inputs input {
+        width: 100%;
+    }
+    .report-filters .filter-actions {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    .report-content .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+}

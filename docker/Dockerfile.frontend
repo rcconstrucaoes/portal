@@ -1,0 +1,69 @@
+# RC Construções - Dockerfile para Frontend (Serviço com Nginx)
+# Versão 5.1 - Revisado e Aprimorado
+
+# Este Dockerfile constrói a imagem Docker para o serviço de frontend.
+# Utiliza um "multi-stage build" para otimizar o tamanho e a segurança da imagem final,
+# separando o ambiente de build (Node.js) do ambiente de execução (Nginx).
+
+# ==================== STAGE 1: BUILDER ====================
+# Esta stage é responsável por instalar as dependências do Node.js e construir o projeto frontend.
+FROM node:18-alpine AS builder # Usando Node.js 18 LTS no Alpine Linux para uma imagem menor
+
+# Define o diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia os arquivos de configuração de dependência (package.json e package-lock.json)
+# primeiro para aproveitar o cache do Docker. Se estes arquivos não mudarem, as camadas
+# subsequentes que dependem deles serão cacheadas.
+COPY rc-construcoes-web/package.json ./
+COPY rc-construcoes-web/package-lock.json ./ # Ou yarn.lock, dependendo do seu gerenciador de pacotes
+
+# Instala as dependências do npm.
+# 'npm ci' é preferível para builds automatizados, garantindo instalações limpas baseadas em package-lock.json.
+# 'npm ci --omit=dev' é se você não precisa de devDependencies para o build final.
+# Para frameworks frontend (React, Vue, Angular), geralmente você precisa de devDependencies para o build.
+RUN npm ci && \
+    npm cache clean --force # Limpa o cache do npm após a instalação para reduzir o tamanho da imagem
+
+# Copia o restante do código-fonte do frontend para o diretório de trabalho
+COPY rc-construcoes-web/ . # Copia o conteúdo do diretório 'rc-construcoes-web' do host para '/app' no container
+
+# Executa o comando de build do frontend (assumindo 'npm run build' que gera assets para produção)
+# Este comando deve compilar seu código-fonte, minificar assets e colocá-los em uma pasta de saída (ex: 'dist' ou 'build').
+RUN npm run build # Este comando é definido no package.json do frontend
+
+# ==================== STAGE 2: RUNNER (Nginx para servir arquivos estáticos) ====================
+# Esta stage final cria a imagem de produção, copiando apenas os artefatos necessários
+# do estágio "builder" e configurando o Nginx para servi-los.
+
+FROM nginx:alpine # Usando a imagem oficial do Nginx no Alpine Linux para ser leve
+
+# Define o fuso horário para o container (importante para logs e timestamps)
+ARG TZ=America/Sao_Paulo
+ENV TZ ${TZ}
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
+    echo ${TZ} > /etc/timezone && \
+    apk del tzdata # Remove tzdata para reduzir o tamanho final da imagem
+
+# Remove a configuração padrão do Nginx
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copia a configuração personalizada do Nginx para o container
+# Esta configuração deve direcionar o Nginx para servir os arquivos estáticos do frontend.
+COPY docker/nginx.conf /etc/nginx/nginx.conf #
+
+# Copia os arquivos estáticos gerados na stage 'builder' para o diretório de serviço do Nginx
+# Assumimos que o 'npm run build' na stage 'builder' coloca os arquivos compilados em '/app/dist'.
+# Se o seu build gera para outra pasta (ex: '/app/build'), ajuste o caminho aqui.
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Permissões adequadas para o usuário Nginx
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html
+
+# Expõe a porta 80, que é a porta padrão para o tráfego HTTP que o Nginx vai escutar
+EXPOSE 80
+
+# Inicia o serviço Nginx quando o container for executado
+CMD ["nginx", "-g", "daemon off;"]

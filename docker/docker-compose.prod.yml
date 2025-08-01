@@ -1,0 +1,164 @@
+# RC Construções - Docker Compose para Produção
+# Versão 5.1 - Revisado e Aprimorado
+
+# Este arquivo define e orquestra a aplicação RC Construções para um ambiente de produção.
+# Ele configura o backend, frontend, banco de dados (PostgreSQL), cache (Redis) e um proxy reverso (Nginx).
+# As variáveis de ambiente críticas são carregadas do ambiente host ou de um arquivo .env.
+# Utilize 'docker compose -f docker-compose.prod.yml up -d' para iniciar em modo detached.
+
+version: '3.8' # Usando a versão 3.8 do Docker Compose para recursos de deploy avançados
+
+services:
+  # ==================== Serviço de Banco de Dados (PostgreSQL) ====================
+  db:
+    container_name: rc_db_prod
+    image: postgres:13-alpine # Imagem oficial do PostgreSQL, versão Alpine é menor
+    restart: always # Sempre reinicia o container se ele parar
+    environment:
+      # Credenciais do banco de dados - OBRIGATÓRIAS em produção
+      # Carregadas do ambiente host ou de um arquivo .env
+      POSTGRES_DB: ${DB_NAME_PROD}
+      POSTGRES_USER: ${DB_USER_PROD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_PROD}
+      PGDATA: /var/lib/postgresql/data/pgdata # Caminho para os dados dentro do container
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data/pgdata # Volume persistente para os dados do DB
+      # - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql # Opcional: Script de inicialização do DB
+    ports:
+      - "5432:5432" # Mapeia a porta do DB para o host (para acesso externo ou ferramentas de DB)
+    networks:
+      - rc_network_prod # Conecta ao network interno da aplicação
+    healthcheck: # Verifica a saúde do banco de dados
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER_PROD} -d ${DB_NAME_PROD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s # Espera 10s antes de começar as verificações
+
+  # ==================== Serviço de Cache (Redis) ====================
+  redis:
+    container_name: rc_redis_prod
+    image: redis:6-alpine # Imagem oficial do Redis, versão Alpine é menor
+    restart: always
+    environment:
+      # Senha do Redis - OBRIGATÓRIA em produção se configurada
+      REDIS_PASSWORD: ${REDIS_PASSWORD_PROD}
+    command: redis-server --requirepass ${REDIS_PASSWORD_PROD} --appendonly yes # Inicia Redis com senha e persistência AOF
+    volumes:
+      - redisdata_prod:/data # Volume persistente para os dados do Redis
+    ports:
+      - "6379:6379" # Mapeia a porta do Redis para o host (para acesso externo ou ferramentas)
+    networks:
+      - rc_network_prod
+    healthcheck: # Verifica a saúde do Redis
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD_PROD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ==================== Serviço de Backend (Node.js/Express) ====================
+  backend:
+    container_name: rc_backend_prod
+    build:
+      context: ./backend # Caminho para o diretório do seu backend
+      dockerfile: Dockerfile.backend # O Dockerfile específico para o backend
+      args: # Argumentos de build, se houver (ex: versão, segredos de build)
+        NODE_ENV: production
+    restart: always
+    environment:
+      # Variáveis de ambiente para o backend - OBRIGATÓRIAS em produção
+      # Carregadas do ambiente host ou de um arquivo .env
+      NODE_ENV: production
+      PORT: 3000 # Porta interna do container do backend
+      DB_DIALECT: postgres
+      DB_HOST: db # Nome do serviço do banco de dados no Docker Compose network
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME_PROD}
+      DB_USER: ${DB_USER_PROD}
+      DB_PASSWORD: ${DB_PASSWORD_PROD}
+      DB_SSL: ${DB_SSL_PROD:-false} # Habilita SSL para o DB, padrão false
+      DB_SSL_REJECT_UNAUTHORIZED: ${DB_SSL_REJECT_UNAUTHORIZED_PROD:-true} # Rejeita certs não autorizados em prod
+
+      JWT_SECRET: ${JWT_SECRET_PROD} # Chave secreta JWT
+      REDIS_HOST: redis # Nome do serviço Redis no Docker Compose network
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD_PROD}
+      REDIS_DB: ${REDIS_DB_PROD:-0}
+      REDIS_ENABLED: ${REDIS_ENABLED_PROD:-true} # Ativa Redis no backend
+
+      LOG_LEVEL: ${LOG_LEVEL_PROD:-info} # Nível de log para produção (info ou warn/error)
+      RATE_LIMIT_GLOBAL_MAX: ${RATE_LIMIT_GLOBAL_MAX_PROD:-1000} # Limites de rate limit
+      AUTH_API_RATE_LIMIT_MAX: ${AUTH_API_RATE_LIMIT_MAX_PROD:-5000}
+
+      CORS_ORIGIN: ${CORS_ORIGIN_PROD} # Origem permitida para CORS (ex: https://seusite.com)
+      TRUST_PROXY_COUNT: ${TRUST_PROXY_COUNT_PROD:-1} # Quantidade de proxies a confiar
+
+      DB_BACKUP_ENABLED: ${DB_BACKUP_ENABLED_PROD:-false} # Ativar backups automáticos
+      DB_BACKUP_SCHEDULE: ${DB_BACKUP_SCHEDULE_PROD:-'0 2 * * *'}
+      DB_BACKUP_RETENTION_DAYS: ${DB_BACKUP_RETENTION_DAYS_PROD:-30}
+      DB_BACKUP_OUTPUT_DIR: /app/backups # Diretório de backups dentro do container
+
+      # Endpoints para Cloud Sync e Analytics (se configurados)
+      CLOUD_SYNC_PULL_ENDPOINT: ${CLOUD_SYNC_PULL_ENDPOINT_PROD}
+      CLOUD_SYNC_PUSH_ENDPOINT: ${CLOUD_SYNC_PUSH_ENDPOINT_PROD}
+      ANALYTICS_ENDPOINT: ${ANALYTICS_ENDPOINT_PROD}
+      ERROR_REPORT_ENDPOINT: ${ERROR_REPORT_ENDPOINT_PROD}
+
+    volumes:
+      - backend_logs:/app/logs # Volume para logs persistentes do backend
+      - backend_uploads:/app/uploads # Volume para uploads de arquivos
+      - backend_backups:/app/backups # Volume para backups do DB
+    networks:
+      - rc_network_prod
+    depends_on:
+      db:
+        condition: service_healthy # Espera o DB estar saudável
+      redis:
+        condition: service_healthy # Espera o Redis estar saudável
+    # Limites de recursos para produção
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5' # Limita a 50% de um core da CPU
+          memory: 512MB # Limita a 512MB de RAM
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s # Espera por 2 minutos antes de contar como falha permanente
+
+  # ==================== Serviço de Frontend (Nginx para servir e proxy) ====================
+  frontend:
+    container_name: rc_frontend_prod
+    build:
+      context: ./rc-construcoes-web # Caminho para o diretório do seu frontend
+      dockerfile: ../docker/Dockerfile.frontend # O Dockerfile específico para o frontend
+    restart: always
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro # Monta o arquivo de configuração do Nginx
+      - static_files:/usr/share/nginx/html # Volume para os arquivos estáticos do frontend (construídos no build)
+      # - ./certbot/conf:/etc/nginx/ssl:ro # Opcional: Para certificados SSL (Certbot)
+      # - ./certbot/www:/var/www/certbot # Opcional: Para desafios HTTP-01 do Certbot
+    ports:
+      - "80:80"  # Porta HTTP para Nginx
+      - "443:443" # Porta HTTPS para Nginx (se SSL estiver configurado)
+    networks:
+      - rc_network_prod
+    depends_on:
+      backend:
+        condition: service_started # Nginx precisa do backend para o proxy API
+
+# ==================== Networks ====================
+networks:
+  rc_network_prod:
+    driver: bridge # Rede interna para comunicação entre containers
+
+# ==================== Volumes Persistentes ====================
+volumes:
+  pgdata_prod: # Dados do PostgreSQL
+  redisdata_prod: # Dados do Redis
+  backend_logs: # Logs da aplicação backend
+  backend_uploads: # Arquivos de upload da aplicação backend
+  backend_backups: # Backups do banco de dados
+  static_files: # Arquivos estáticos do frontend servidos pelo Nginx (gerado no build do frontend)

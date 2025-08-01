@@ -1,0 +1,80 @@
+# RC Construções - Dockerfile para Backend Node.js
+# Versão 5.1 - Revisado e Aprimorado
+
+# Este Dockerfile constrói a imagem Docker para o serviço de backend Node.js.
+# Utiliza um processo de "multi-stage build" para criar uma imagem final otimizada,
+# menor e mais segura, separando as dependências de build das de runtime.
+
+# ==================== STAGE 1: BUILDER ====================
+# Esta stage é responsável por instalar todas as dependências (incluindo devDependencies)
+# e construir o projeto (se houver um passo de build, como transpilação TypeScript).
+FROM node:18-alpine AS builder # Usando Node.js 18 LTS no Alpine Linux para uma imagem menor e mais segura
+
+# Define o diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia os arquivos de configuração de dependência primeiro para aproveitar o cache do Docker
+COPY package.json ./
+COPY package-lock.json ./ # Ou yarn.lock, dependendo do seu gerenciador de pacotes
+
+# Define o ambiente de build para produção por padrão, pode ser sobrescrito por ARG
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+# Instala as dependências. Se for um build de produção, apenas as dependências de produção.
+# Se for um build de desenvolvimento/teste, instala todas as dependências.
+RUN apk add --no-cache python3 make g++ && \ # Dependências de build para pacotes nativos (ex: bcrypt)
+    npm ci --omit=dev && \ # Instala apenas dependências de produção
+    # Se você tiver devDependencies que são necessárias para um step de build (ex: transpiler),
+    # pode instalar --include=dev aqui e depois remover no estágio final.
+    # npm ci instala de forma limpa e rápida baseando-se no package-lock.json
+    echo "Node modules installed for ${NODE_ENV} environment."
+
+# Copia o restante do código-fonte do backend
+COPY . .
+
+# Se houver um passo de "build" no seu package.json (ex: 'npm run build' para TypeScript)
+# RUN npm run build
+
+# ==================== STAGE 2: PRODUCTION RUNTIME ====================
+# Esta stage final cria a imagem de produção, copiando apenas os artefatos necessários
+# do estágio "builder" para o ambiente de execução.
+
+FROM node:18-alpine AS runner # Imagem base limpa para o ambiente de execução
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Cria um usuário não-root para segurança (opcional, mas recomendado)
+RUN addgroup appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+# Copia apenas o necessário do estágio builder:
+# 1. package.json e package-lock.json (para auditoria e npm scripts básicos)
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package-lock.json ./
+# 2. node_modules (apenas as dependências de produção)
+COPY --from=builder /app/node_modules ./node_modules
+# 3. O código-fonte da aplicação (os arquivos .js, .json, etc.)
+COPY --from=builder /app/server.js ./
+COPY --from=builder /app/backend/ ./backend/
+COPY --from=builder /app/database/ ./database/
+COPY --from=builder /app/scripts/ ./scripts/
+# Copie outros diretórios e arquivos que são necessários em runtime
+# Ex: .env.example se você tiver um para referência, mas não use .env em produção na imagem!
+# Certifique-se que o .env em produção é montado como volume ou vars de ambiente.
+
+# Expõe a porta em que o aplicativo será executado (definida no seu server.js)
+EXPOSE 3000
+
+# Define o comando para iniciar o aplicativo quando o container for executado
+CMD ["node", "server.js"]
+
+# ==================== USO EM DESENVOLVIMENTO (OPCIONAL) ====================
+# Se você quiser usar este Dockerfile para desenvolvimento também,
+# o comando 'npm run dev' será definido no docker-compose.yml.
+# No docker-compose.yml de desenvolvimento, você deve:
+# - Montar o volume do código-fonte local para /app para hot-reloading
+# - Mapear a porta de debug (9229)
+# - Usar 'npm install' sem --omit=dev para instalar devDependencies
+# - Opcionalmente, usar a imagem base 'node:18-alpine' sem multistage para dev build

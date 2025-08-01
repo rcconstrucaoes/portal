@@ -1,0 +1,197 @@
+/**
+ * RC Construções - Estilos de Formulários
+ * Versão 5.1 - Revisado e Aprimorado
+ *
+ * Define a aparência e o comportamento de todos os elementos de formulário
+ * para uma experiência de usuário consistente e moderna.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS (para alinhamento com a paleta de cores) ===== */
+/* As variáveis são importadas implicitamente de modern_main_css.css */
+:root {
+    /* Cores */
+    --color-primary: #f58220;
+    --color-dark: #2d3748;
+    --color-text: #4a5568;
+    --color-border: #e2e8f0;
+    --color-light: #f7fafc;
+    --color-placeholder: #a0aec0;
+    --color-error: #dc3545;
+    --color-error-light: rgba(220, 53, 69, 0.2);
+    --color-success: #28a745;
+    --color-focus-ring: rgba(245, 130, 32, 0.5);
+
+    /* Fontes e Espaçamento */
+    --font-family-base: 'Inter', sans-serif;
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+}
+
+/* ===== ESTRUTURA E ESTILO BÁSICO DO FORMULÁRIO ===== */
+.form-group {
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.95rem; /* Um pouco maior e mais legível */
+    font-weight: 600;
+    color: var(--color-dark);
+    margin-bottom: var(--spacing-sm);
+    transition: color var(--transition-fast);
+}
+
+.form-label.required::after {
+    content: ' *';
+    color: var(--color-error);
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: var(--spacing-md);
+    background-color: var(--color-light);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    color: var(--color-dark);
+    line-height: 1.5;
+    transition: all var(--transition-fast);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075); /* Sombra interna sutil */
+    -webkit-appearance: none; /* Remove estilos padrão em Webkit */
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-focus-ring); /* Anel de foco vibrante */
+    background-color: #fff;
+}
+
+/* Estilos para placeholders */
+.form-control::placeholder {
+    color: var(--color-placeholder);
+    opacity: 1; /* Garante que o placeholder seja visível em todos os navegadores */
+}
+
+/* Campos de texto de várias linhas */
+textarea.form-control {
+    min-height: 120px;
+    resize: vertical; /* Permite redimensionamento vertical */
+}
+
+/* Campos de seleção (select) */
+select.form-control {
+    cursor: pointer;
+}
+
+/* Campos desabilitados */
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+/* Estilos de validação */
+.form-control.is-invalid {
+    border-color: var(--color-error);
+}
+.form-control.is-invalid:focus {
+    box-shadow: 0 0 0 3px var(--color-error-light);
+}
+
+.form-control.is-valid {
+    border-color: var(--color-success);
+}
+.form-control.is-valid:focus {
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+}
+
+/* Mensagens de erro de validação (para o frontend) */
+.text-danger {
+    color: var(--color-error);
+    font-size: 0.8rem;
+    margin-top: var(--spacing-xs);
+    display: block; /* Para garantir que ocupe sua própria linha */
+}
+
+/* Layout de formulário em grid */
+.form-grid {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+.form-grid.two-columns {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.form-grid.three-columns {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Utilitários para alinhamento de texto em formulários */
+.text-right {
+    text-align: right;
+}
+.text-center {
+    text-align: center;
+}
+
+/* Estilos para a barra de progresso (se usada em uploads) */
+.progress-bar-container {
+    width: 100%;
+    background-color: var(--color-border);
+    border-radius: var(--radius-full);
+    height: 10px;
+    margin: var(--spacing-md) 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--color-primary);
+    transition: width var(--transition-smooth);
+}
+
+.progress-bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 10px;
+    font-size: 0.75rem;
+    color: var(--color-dark);
+}
+
+/* Estilos para lista de logs (se o formulário tiver uma) */
+.log-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: #fff;
+    font-size: 0.85rem;
+}
+.log-list li {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+}
+.log-list li:last-child {
+    border-bottom: none;
+}
+.log-list .log-success { color: var(--color-success); }
+.log-list .log-warning { color: var(--color-warning); }
+.log-list .log-error { color: var(--color-error); }

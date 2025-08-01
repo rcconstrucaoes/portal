@@ -1,0 +1,138 @@
+/**
+ * RC Construções - Estilos para a Página de Importação
+ * Versão 5.1 - Revisado e Aprimorado
+ *
+ * Define a aparência e o comportamento dos elementos da página de importação de dados,
+ * como o formulário de upload, a barra de progresso e a área de logs.
+ */
+
+/* ===== VARIÁVEIS CSS GLOBAIS (para alinhamento com a paleta de cores) ===== */
+/* As variáveis são importadas implicitamente de modern_main_css.css e components.css */
+:root {
+    /* Cores */
+    --color-primary: #f58220;
+    --color-dark: #2d3748;
+    --color-text: #4a5568;
+    --color-border: #e2e8f0;
+    --color-light: #f7fafc;
+    --color-placeholder: #a0aec0;
+    --color-error: #dc3545;
+    --color-success: #28a745;
+    --color-info: #17a2b8;
+
+    /* Espaçamento e Borda */
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --radius-md: 8px;
+    --radius-full: 9999px;
+}
+
+/* ===== ESTILO DA SEÇÃO DE IMPORTAÇÃO ===== */
+.import-section {
+    max-width: 800px;
+    margin: var(--spacing-xl) auto;
+}
+
+/* ===== BARRA DE PROGRESSO DE IMPORTAÇÃO ===== */
+.progress-bar-container {
+    width: 100%;
+    background-color: var(--color-border);
+    border-radius: var(--radius-full);
+    height: 25px;
+    margin: var(--spacing-md) 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0; /* Começa com 0% */
+    background-color: var(--color-primary);
+    transition: width 0.4s ease-in-out;
+}
+
+.progress-bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-dark);
+}
+
+/* ===== ÁREA DE LOGS DE IMPORTAÇÃO ===== */
+.import-results {
+    margin-top: var(--spacing-xl);
+}
+
+.log-list {
+    list-style: none;
+    padding: var(--spacing-md);
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: #fff;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.log-list li {
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+.log-list li:last-child {
+    border-bottom: none;
+}
+
+.log-list li.log-info { color: var(--color-text); }
+.log-list li.log-success { color: var(--color-success); font-weight: 600; }
+.log-list li.log-warning { color: var(--color-warning); font-weight: 600; }
+.log-list li.log-error { color: var(--color-error); font-weight: 600; }
+
+/* ===== ALERTAS DE STATUS (seção de resultados) ===== */
+.alert {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.alert-info {
+    background-color: var(--color-info);
+    color: #fff;
+}
+.alert-success {
+    background-color: var(--color-success);
+    color: #fff;
+}
+.alert-warning {
+    background-color: var(--color-warning);
+    color: var(--color-dark);
+}
+.alert-danger {
+    background-color: var(--color-error);
+    color: #fff;
+}
+
+/* ===== SUMÁRIO DE IMPORTAÇÃO ===== */
+#import-summary {
+    background-color: var(--color-bg-app);
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+}
+
+#import-summary p {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+#import-summary strong {
+    color: var(--color-dark);
+}
