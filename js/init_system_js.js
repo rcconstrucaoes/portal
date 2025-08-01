@@ -18,10 +18,11 @@
         debugMode: true, // true em desenvolvimento, false em produção
         maxScriptRetries: 3,
         coreModuleValidation: true,
-        scriptBaseUrl: './', // Base para carregar scripts (ajustado para o diretório raiz)
+        scriptBaseUrl: '/', // Base para carregar scripts (ajustado para o diretório raiz)
         // Definição dos módulos core e opcionais com seus caminhos e nomes globais esperados
         modules: {
             core: [
+                { id: 'logger_app', path: 'js/core/logger.js', globalName: 'SystemLogger', isModule: false }, // Alterado para isModule: false
                 { id: 'settings', path: 'js/core/settings.js', globalName: 'SettingsManager' },
                 { id: 'database', path: 'js/core/database.js', globalName: 'Database' },
                 { id: 'security', path: 'js/core/security.js', globalName: 'SecurityManager' },
@@ -29,8 +30,6 @@
                 { id: 'utils', path: 'js/core/utils.js', globalName: 'UtilsManager' },
                 { id: 'auth', path: 'js/core/auth.js', globalName: 'AuthManager' },
                 { id: 'data_versioning', path: 'js/core/data-versioning.js', globalName: 'DataVersioning' },
-                // Adicione SystemLogger e PerformanceMonitor como core, mas com isModule: true
-                { id: 'logger_app', path: 'js/core/logger.js', globalName: 'SystemLogger', isModule: true },
                 { id: 'performance_monitor_core', path: 'js/core/performance-monitor.js', globalName: 'PerformanceMonitor', isModule: true }
             ],
             optional: [
@@ -82,11 +81,11 @@
         };
         // Métodos de log que espelham a API completa
         return {
-            info: (context, message, style = '') => log('INFO', context, message, style),
-            warn: (context, message, style = '') => log('WARN', context, message, style),
-            error: (context, message, style = '') => log('ERROR', context, message, style),
-            debug: (context, message, style = '') => log('DEBUG', context, message, style),
-            success: (context, message, style = '') => log('INFO', context, message, style), // Success como INFO para o basic logger
+            info: (context, message, data = null) => log('INFO', context, message, data),
+            warn: (context, message, data = null) => log('WARN', context, message, data),
+            error: (context, message, data = null) => log('ERROR', context, message, data),
+            debug: (context, message, data = null) => log('DEBUG', context, message, data),
+            success: (context, message, data = null) => log('INFO', context, message, data), // Success como INFO para o basic logger
         };
     }
     const basicLogger = getBasicLogger();
@@ -161,7 +160,7 @@
                         basicLogger.info('ScriptLoader', `✅ Módulo carregado: ${path} (ESM)`, 'color: #0c9d58; font-weight: bold;');
                     } else {
                         // Para scripts tradicionais (IIFE ou globais), carregue via script tag
-                        await ScriptLoader.loadScript(path, id);
+                        await ScriptLoader.loadScript(`${appConfig.scriptBaseUrl}${path}`, id); // Caminho absoluto
                         // Após carregar, tente obter a referência global novamente
                         let tempGlobalRef = window;
                         if (globalName) {
@@ -246,96 +245,120 @@
 
                 } catch (error) {
                     basicLogger.error('ModuleManager', `Falha crítica na inicialização do módulo core '${moduleConfig.id}': ${error.message}`, 'color: #dc3545; font-weight: bold;');
-                    throw error; // Interrompe o sistema
+                    registeredModules.get(moduleConfig.id).status = 'failed';
+                    // Exibe erro crítico na tela para o usuário
+                    displayCriticalError(`Erro Crítico na Inicialização: Falha ao carregar script ${moduleConfig.path}: ${error.message}. Por favor, recarregue a página.`);
+                    throw error; // Interrompe a inicialização
                 }
             }
             const coreModuleInitEnd = performance.now();
-            basicLogger.debug('Performance', `Marca 'coreModuleInitEnd' definida em: ${coreModuleInitEnd.toFixed(2)} ms`, 'color: #7f8c8d; font-style: italic;');
-            basicLogger.info('Performance', `Medida 'coreModuleInitTime' concluída: ${(coreModuleInitEnd - coreModuleInitStart).toFixed(2)} ms`, 'color: #1a73e8; font-weight: bold;');
-            basicLogger.success('ModuleManager', '✅ Todos os módulos Core foram inicializados com sucesso.');
+            basicLogger.info('Performance', `Todos os módulos Core inicializados em: ${(coreModuleInitEnd - coreModuleInitStart).toFixed(2)} ms`, 'color: #1a73e8; font-weight: bold;');
         }
 
         /**
-         * Inicializa os módulos opcionais em paralelo.
+         * Inicializa os módulos opcionais.
          */
         async function initializeOptionalModules() {
-            basicLogger.info('ScriptLoader', 'Carregando scripts opcionais em paralelo...');
-            const loadPromises = appConfig.modules.optional.map(moduleConfig => processModule(moduleConfig).then(instance => {
-                // Se o módulo opcional tem um init, chame-o aqui, pois eles podem ter dependências de core
-                if (instance && typeof instance.init === 'function' && registeredModules.get(moduleConfig.id).status !== 'initialized') {
-                    basicLogger.debug('ModuleManager', `Inicializando módulo opcional: ${moduleConfig.id}`);
-                    return instance.init().then(() => {
-                        registeredModules.get(moduleConfig.id).status = 'initialized';
-                        basicLogger.success('ModuleManager', `Módulo opcional '${moduleConfig.id}' inicializado.`, 'color: #0c9d58; font-weight: bold;');
-                        return instance;
-                    }).catch(e => {
-                        basicLogger.error('ModuleManager', `Erro ao inicializar módulo opcional '${moduleConfig.id}': ${e.message}`, 'color: #dc3545; font-weight: bold;');
-                        return null; // Retorna null para não parar o Promise.all
-                    });
+            basicLogger.info('ModuleManager', 'Iniciando sequência de inicialização dos módulos Opcionais...');
+            const optionalModuleInitStart = performance.now();
+            basicLogger.debug('Performance', `Marca 'optionalModuleInitStart' definida em: ${optionalModuleInitStart.toFixed(2)} ms`, 'color: #7f8c8d; font-style: italic;');
+
+            for (const moduleConfig of appConfig.modules.optional) {
+                try {
+                    basicLogger.debug('ModuleManager', `Processando e inicializando módulo opcional: ${moduleConfig.id}`, 'color: #7f8c8d; font-style: italic;');
+                    const instance = await processModule(moduleConfig);
+                    if (instance && typeof instance.init === 'function') {
+                        const initStartTime = performance.now();
+                        basicLogger.debug('Performance', `Marca 'init_${moduleConfig.id}_start' definida em: ${initStartTime.toFixed(2)} ms`, 'color: #7f8c8d; font-style: italic;');
+                        await instance.init();
+                        const initEndTime = performance.now();
+                        basicLogger.info('Performance', `Medida 'init_${moduleConfig.id}_time' concluída: ${(initEndTime - initStartTime).toFixed(2)} ms`, 'color: #1a73e8; font-weight: bold;');
+                    }
+                    registeredModules.get(moduleConfig.id).status = 'initialized';
+                    basicLogger.success('ModuleManager', `Módulo '${moduleConfig.id}' inicializado com sucesso.`, 'color: #0c9d58; font-weight: bold;');
+                } catch (error) {
+                    basicLogger.error('ModuleManager', `Erro ao inicializar módulo opcional '${moduleConfig.id}': ${error.message}`, 'color: #dc3545; font-weight: bold;');
+                    registeredModules.get(moduleConfig.id).status = 'failed';
+                    // Não é um erro crítico, então não interrompe a inicialização dos outros módulos
                 }
-                return instance;
-            }).catch(e => {
-                basicLogger.warn('ModuleManager', `Módulo opcional '${moduleConfig.id}' não pode ser carregado/inicializado: ${e.message}.`, 'color: #f7b42c; font-weight: bold;');
-                return null; // Retorna null para não parar o Promise.all
-            }));
-            await Promise.all(loadPromises);
-            basicLogger.success('ScriptLoader', 'Todos os scripts opcionais foram processados (carregados ou ignorados).', 'color: #0c9d58; font-weight: bold;');
+            }
+            const optionalModuleInitEnd = performance.now();
+            basicLogger.info('Performance', `Todos os módulos Opcionais inicializados em: ${(optionalModuleInitEnd - optionalModuleInitStart).toFixed(2)} ms`, 'color: #1a73e8; font-weight: bold;');
         }
 
-        // Registra todos os módulos no início
-        appConfig.modules.core.forEach(m => registerModule(m.id, m.path, m.globalName, true, m.isModule));
-        appConfig.modules.optional.forEach(m => registerModule(m.id, m.path, m.globalName, false, m.isModule));
+        /**
+         * Retorna a instância de um módulo carregado.
+         * @param {string} id - ID do módulo.
+         * @returns {any} Instância do módulo ou undefined.
+         */
+        function getModuleInstance(id) {
+            return moduleInstances.get(id);
+        }
+
+        /**
+         * Retorna o status de um módulo.
+         * @param {string} id - ID do módulo.
+         * @returns {string} Status do módulo ('registered', 'loaded', 'initialized', 'failed').
+         */
+        function getModuleStatus(id) {
+            return registeredModules.has(id) ? registeredModules.get(id).status : 'not_found';
+        }
+
+        /**
+         * Retorna todos os módulos registrados.
+         * @returns {Map<string, Object>} Mapa de módulos registrados.
+         */
+        function getAllRegisteredModules() {
+            return new Map(registeredModules); // Retorna uma cópia para evitar modificações externas
+        }
 
         return {
-            initCore: initializeCoreModules,
-            initOptional: initializeOptionalModules,
-            getModule: (id) => moduleInstances.get(id) || registeredModules.get(id)?.instance, // Tenta obter instância carregada ou registrada
-            getAllModules: () => registeredModules,
+            registerModule,
+            processModule,
+            initializeCoreModules,
+            initializeOptionalModules,
+            getModuleInstance,
+            getModuleStatus,
+            getAllRegisteredModules
         };
     })();
 
     // =========================================================
-    // Gerenciador de Scripts (simples e robusto)
+    // Carregador de Scripts (ScriptLoader)
     // =========================================================
     const ScriptLoader = (function() {
         const loadedScripts = new Set();
+
         basicLogger.info('ScriptLoader', 'ScriptLoader inicializado.');
 
         /**
-         * Carrega um script dinamicamente e retorna uma Promessa que resolve quando o script é carregado.
-         * Adiciona um timestamp para evitar cache durante o desenvolvimento.
-         * @param {string} src - O caminho do script relativo a `appConfig.scriptBaseUrl`.
-         * @param {string} id - Um ID único para o script (útil para depuração e para evitar duplicação).
-         * @returns {Promise<void>} Uma Promessa que resolve quando o script é carregado ou rejeita se houver erro.
+         * Carrega um script dinamicamente.
+         * @param {string} url - URL do script.
+         * @param {string} id - ID para o script (para evitar carregamentos duplicados).
+         * @returns {Promise<void>}
          */
-        function loadScript(src, id) {
+        function loadScript(url, id) {
             return new Promise((resolve, reject) => {
-                // Se já tentamos carregar este script, resolve imediatamente
-                if (loadedScripts.has(src)) {
-                    basicLogger.debug('ScriptLoader', `Script já carregado, ignorando nova inclusão: ${src}`);
+                if (loadedScripts.has(id)) {
+                    basicLogger.warn('ScriptLoader', `Script '${id}' (${url}) já carregado. Ignorando.`);
                     return resolve();
                 }
 
                 const script = document.createElement('script');
-                script.src = `${appConfig.scriptBaseUrl}${src}?v=${Date.now()}`; // Adiciona timestamp para cache busting
-                script.defer = true; // Carrega em paralelo e executa na ordem do DOM
-                script.id = `script-${id}`; // ID para facilitar a depuração
-
-                const timeout = setTimeout(() => {
-                    reject(new Error(`Timeout ao carregar script: ${src}`));
-                }, 10000); // 10 segundos de timeout
+                script.src = url;
+                script.async = true;
+                script.defer = true; // Adicionado defer para garantir ordem de execução após o HTML
+                script.id = `script-${id}`;
 
                 script.onload = () => {
-                    clearTimeout(timeout);
-                    loadedScripts.add(src); // Registra como carregado
-                    basicLogger.info('ScriptLoader', `✅ Script carregado: ${src}`, 'color: #0c9d58; font-weight: bold;');
+                    loadedScripts.add(id);
+                    basicLogger.debug('ScriptLoader', `Script '${id}' (${url}) carregado com sucesso.`);
                     resolve();
                 };
 
-                script.onerror = (e) => {
-                    clearTimeout(timeout);
-                    basicLogger.error('ScriptLoader', `Erro ao carregar script: ${src}`, e);
-                    reject(new Error(`Falha ao carregar script ${src}: ${e.message || 'erro desconhecido'}`));
+                script.onerror = () => {
+                    basicLogger.error('ScriptLoader', `Falha ao carregar script '${id}' (${url}).`);
+                    reject(new Error(`Falha ao carregar script: ${url}`));
                 };
 
                 document.head.appendChild(script);
@@ -343,109 +366,101 @@
         }
 
         return {
-            loadScript: loadScript,
-            getLoadedScripts: () => Array.from(loadedScripts)
+            loadScript
         };
     })();
 
     // =========================================================
-    // Event Handler (apenas uma casca, o módulo real é SystemEventHandler)
+    // Funções Globais de Inicialização
     // =========================================================
-    const SystemEventHandler = (function() {
-        const events = new Map();
-        basicLogger.info('EventHandler', 'SystemEventHandler inicializado.');
 
-        function on(eventName, callback) {
-            if (!events.has(eventName)) {
-                events.set(eventName, []);
-            }
-            events.get(eventName).push(callback);
-        }
-
-        function emit(eventName, data) {
-            if (events.has(eventName)) {
-                events.get(eventName).forEach(callback => {
-                    try {
-                        callback(data);
-                    } catch (e) {
-                        basicLogger.error('EventHandler', `Erro ao executar callback para o evento '${eventName}': ${e.message}`, e);
-                    }
-                });
-            }
-            basicLogger.debug('EventHandler', `Evento '${eventName}' disparado.`, 'color: #7f8c8d; font-style: italic;');
-        }
-
-        return { on, emit };
-    })();
-    // Expõe SystemEventHandler globalmente para acesso precoce, se necessário
-    window.SystemEventHandler = SystemEventHandler;
-
-
-    // =========================================================
-    // Início da Inicialização do Sistema
-    // =========================================================
-    async function initSystem() {
-        const initStartTime = performance.now();
-        basicLogger.debug('Performance', `Marca 'systemInitStart' definida em: ${initStartTime.toFixed(2)} ms`);
-
-        try {
-            // Carrega e inicializa módulos core em ordem, incluindo SystemLogger e PerformanceMonitor
-            await ModuleManager.initCore();
-            
-            // Depois que o SystemLogger completo estiver inicializado, o basicLogger será substituído
-            // E PerformanceMonitor também estará disponível para logs detalhados
-            const performanceMonitor = ModuleManager.getModule('performance_monitor_core');
-
-            // Carrega e inicializa módulos opcionais em paralelo
-            await ModuleManager.initOptional();
-            const optionalScriptsLoadedTime = performance.now();
-            performanceMonitor.debug('Performance', `Marca 'optionalScriptsLoaded' definida em: ${optionalScriptsLoadedTime.toFixed(2)} ms`);
-            performanceMonitor.info('Performance', `Medida 'optionalScriptLoadTime' concluída: ${(optionalScriptsLoadedTime - performanceMonitor.getMark('requiredScriptsLoaded')).toFixed(2)} ms`);
-            
-            // Inicializa o ModernAppManager, que gerencia a navegação da UI
-            const modernAppManager = ModuleManager.getModule('modern_app');
-            if (modernAppManager && typeof modernAppManager.attemptInitialization === 'function') {
-                await modernAppManager.attemptInitialization(); // Inicia a aplicação real
-            } else {
-                throw new Error('ModernAppManager não foi carregado ou não tem método attemptInitialization.');
-            }
-
-            const totalInitializationTime = performance.now() - initStartTime;
-            performanceMonitor.info('Performance', `Medida 'totalInitializationTime' concluída: ${totalInitializationTime.toFixed(2)} ms`);
-            SystemLoggerInstance.info('InitSystem', `⏱️ Tempo total de inicialização do sistema: ${totalInitializationTime.toFixed(2)} ms`);
-            SystemLoggerInstance.success('InitSystem', `🎉 Sistema totalmente carregado e pronto para uso!`);
-            SystemEventHandler.emit('rcSystemReady', { version: appConfig.version, initTime: totalInitializationTime, status: 'success' });
-
-        } catch (error) {
-            basicLogger.error('InitSystem', `Falha crítica durante a inicialização do sistema: ${error.message}`, error);
-            // Tenta usar o ErrorHandler se ele foi carregado
-            const errorHandler = ModuleManager.getModule('error_handler');
-            if (errorHandler && typeof errorHandler.handleError === 'function') {
-                errorHandler.handleError(error, { type: 'SystemInitFatal', source: 'initSystem' });
-            } else {
-                // Fallback para exibir erro crítico na UI se o ErrorHandler não estiver pronto
-                const criticalErrorElementId = appConfig.criticalErrorElementId || 'system-critical-error-display';
-                const errorDisplay = document.getElementById(criticalErrorElementId);
-                if (errorDisplay) {
-                    errorDisplay.textContent = `Erro Crítico na Inicialização: ${error.message}. Por favor, recarregue a página.`;
-                    errorDisplay.style.display = 'block';
-                    errorDisplay.style.backgroundColor = '#dc3545';
-                    errorDisplay.style.color = 'white';
-                    errorDisplay.style.padding = '15px';
-                    errorDisplay.style.textAlign = 'center';
-                    errorDisplay.style.position = 'fixed';
-                    errorDisplay.style.top = '0';
-                    errorDisplay.style.width = '100%';
-                    errorDisplay.style.zIndex = '10000';
-                } else {
-                    alert(`Erro Crítico na Inicialização: ${error.message}. Por favor, recarregue a página.`);
-                }
-            }
-            SystemEventHandler.emit('rcSystemError', { message: error.message, status: 'failed' });
-            // Não faça nada mais aqui para evitar mascarar o erro original
+    /**
+     * Exibe uma mensagem de erro crítica na tela.
+     * @param {string} message - Mensagem de erro a ser exibida.
+     */
+    function displayCriticalError(message) {
+        const errorDisplay = document.getElementById('system-critical-error-display');
+        if (errorDisplay) {
+            errorDisplay.style.display = 'block';
+            errorDisplay.style.backgroundColor = '#dc3545';
+            errorDisplay.style.color = 'white';
+            errorDisplay.style.padding = '15px';
+            errorDisplay.style.textAlign = 'center';
+            errorDisplay.style.position = 'fixed';
+            errorDisplay.style.top = '0';
+            errorDisplay.style.left = '0';
+            errorDisplay.style.width = '100%';
+            errorDisplay.style.zIndex = '9999';
+            errorDisplay.textContent = message;
+        } else {
+            console.error('Erro Crítico: ' + message);
+            alert('Erro Crítico: ' + message + '\nPor favor, verifique o console para mais detalhes.');
         }
     }
 
-    // Inicia o processo de inicialização quando o DOM estiver completamente carregado.
-    document.addEventListener('DOMContentLoaded', initSystem);
+    /**
+     * Inicia o processo de inicialização do aplicativo.
+     */
+    async function startApplication() {
+        try {
+            // Primeiro, registra todos os módulos
+            appConfig.modules.core.forEach(m => ModuleManager.registerModule(m.id, m.path, m.globalName, true, m.isModule));
+            appConfig.modules.optional.forEach(m => ModuleManager.registerModule(m.id, m.path, m.globalName, false, m.isModule));
+
+            // Inicializa módulos core (incluindo o logger completo)
+            await ModuleManager.initializeCoreModules();
+
+            // Agora que o SystemLogger está inicializado, podemos usá-lo
+            const appLogger = SystemLoggerInstance.getAppLogger('Application');
+            appLogger.info('Application', 'Módulos Core inicializados. Iniciando módulos Opcionais...');
+
+            // Inicializa módulos opcionais
+            await ModuleManager.initializeOptionalModules();
+
+            appLogger.info('Application', 'Todos os módulos carregados e inicializados. Aplicação pronta!');
+            const totalTime = performance.now() - startTime;
+            appLogger.info('Performance', `Tempo total de inicialização: ${totalTime.toFixed(2)} ms`, 'color: #1a73e8; font-weight: bold;');
+
+            // Exemplo de uso do ModernAppManager (se carregado)
+            const ModernAppManager = ModuleManager.getModuleInstance('modern_app');
+            if (ModernAppManager && typeof ModernAppManager.init === 'function') {
+                appLogger.info('Application', 'ModernAppManager detectado. Inicializando roteamento...');
+                ModernAppManager.init(); // Inicializa o roteador
+            } else {
+                appLogger.warn('Application', 'ModernAppManager não encontrado ou não inicializado. O roteamento de SPA pode não funcionar.');
+            }
+
+            // Exemplo de uso do SettingsManager (se carregado)
+            const SettingsManager = ModuleManager.getModuleInstance('settings');
+            if (SettingsManager && typeof SettingsManager.getSetting === 'function') {
+                appLogger.info('Application', `Tema atual: ${SettingsManager.getSetting('theme')}`);
+            }
+
+            // Adiciona Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(registration => {
+                            appLogger.success('ServiceWorker', 'Service Worker registrado com sucesso:', registration.scope);
+                        })
+                        .catch(error => {
+                            appLogger.error('ServiceWorker', 'Falha no registro do Service Worker:', error);
+                        });
+                });
+            }
+
+        } catch (error) {
+            console.error('Erro fatal na inicialização da aplicação:', error);
+            displayCriticalError(`Erro fatal na inicialização da aplicação: ${error.message}. Consulte o console para detalhes.`);
+        }
+    }
+
+    // Inicia a aplicação quando o DOM estiver completamente carregado
+    document.addEventListener('DOMContentLoaded', startApplication);
+
+    // Expõe o ModuleManager globalmente para debug ou acesso externo se necessário
+    window.ModuleManager = ModuleManager;
+
 })();
+
+
