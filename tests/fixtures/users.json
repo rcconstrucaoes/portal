@@ -1,0 +1,85 @@
+[
+  {
+    "id": 1,
+    "name": "Administrador Mestre",
+    "username": "admin",
+    "email": "admin@rc-construcoes.com",
+    "passwordHash": "$2a$10$C82aPq8X/1M4k/k.9F9a8eD/mX2D0Nl2C8q/k/v/N4k8O6j4/k",
+    "role": "admin",
+    "permissions": ["system.admin"],
+    "isActive": true,
+    "createdAt": 1720000000000,
+    "updatedAt": 1720000000000,
+    "lastLogin": null
+  },
+  {
+    "id": 2,
+    "name": "Gerente de Projetos",
+    "username": "manager",
+    "email": "manager@rc-construcoes.com",
+    "passwordHash": "$2a$10$C82aPq8X/1M4k/k.9F9a8eD/mX2D0Nl2C8q/k/v/N4k8O6j4/k",
+    "role": "manager",
+    "permissions": [
+      "dashboard.view",
+      "clients.view", "clients.create", "clients.edit", "clients.delete",
+      "contracts.view", "contracts.create", "contracts.edit", "contracts.delete",
+      "budgets.view", "budgets.create", "budgets.edit", "budgets.delete", "budgets.approve",
+      "financial.view", "financial.edit",
+      "reports.view", "reports.generate",
+      "suppliers.view", "suppliers.create", "suppliers.edit", "suppliers.delete"
+    ],
+    "isActive": true,
+    "createdAt": 1720100000000,
+    "updatedAt": 1720100000000,
+    "lastLogin": null
+  },
+  {
+    "id": 3,
+    "name": "Usuário Comum",
+    "username": "user",
+    "email": "user@rc-construcoes.com",
+    "passwordHash": "$2a$10$C82aPq8X/1M4k/k.9F9a8eD/mX2D0Nl2C8q/k/v/N4k8O6j4/k",
+    "role": "user",
+    "permissions": [
+      "dashboard.view",
+      "clients.view",
+      "contracts.view",
+      "budgets.view", "budgets.create", "budgets.edit"
+    ],
+    "isActive": true,
+    "createdAt": 1720200000000,
+    "updatedAt": 1720200000000,
+    "lastLogin": null
+  },
+  {
+    "id": 4,
+    "name": "Responsável Financeiro",
+    "username": "financeiro",
+    "email": "financeiro@rc-construcoes.com",
+    "passwordHash": "$2a$10$C82aPq8X/1M4k/k.9F9a8eD/mX2D0Nl2C8q/k/v/N4k8O6j4/k",
+    "role": "financial",
+    "permissions": [
+      "dashboard.view",
+      "financial.view", "financial.edit",
+      "budgets.view", "budgets.approve",
+      "reports.view", "reports.generate"
+    ],
+    "isActive": true,
+    "createdAt": 1720300000000,
+    "updatedAt": 1720300000000,
+    "lastLogin": null
+  },
+  {
+    "id": 5,
+    "name": "Usuário Inativo",
+    "username": "inactive",
+    "email": "inactive@rc-construcoes.com",
+    "passwordHash": "$2a$10$C82aPq8X/1M4k/k.9F9a8eD/mX2D0Nl2C8q/k/v/N4k8O6j4/k",
+    "role": "user",
+    "permissions": ["dashboard.view", "clients.view"],
+    "isActive": false,
+    "createdAt": 1720400000000,
+    "updatedAt": 1720400000000,
+    "lastLogin": null
+  }
+]

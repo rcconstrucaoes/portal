@@ -1,0 +1,182 @@
+<div id="page-clients" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-users"></i> Clientes</h3>
+    <div class="filter-controls">
+      <div class="search-filter">
+        <input type="text" id="client-search-input" class="form-control" placeholder="Buscar por nome, e-mail ou CPF..." data-testid="search-input">
+        <button class="btn btn-sm btn-primary" id="apply-client-search" data-testid="apply-search-button">Buscar</button>
+      </div>
+      <div class="select-filter">
+        <label for="client-status-filter">Status:</label>
+        <select id="client-status-filter" class="form-control">
+          <option value="">Todos</option>
+          <option value="active">Ativo</option>
+          <option value="inactive">Inativo</option>
+        </select>
+      </div>
+      <button class="btn btn-sm btn-outline" id="clear-client-filter">Limpar Filtros</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card primary">
+      <div class="stat-icon"><i class="fas fa-user-friends"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="clients-total-count">0</div>
+        <div class="stat-label">Total de Clientes</div>
+      </div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="clients-active-count">0</div>
+        <div class="stat-label">Clientes Ativos</div>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="clients-with-contracts-count">0</div>
+        <div class="stat-label">Com Contratos</div>
+      </div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="clients-new-this-month">0</div>
+        <div class="stat-label">Novos Este Mês</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container card">
+    <div class="card-header">
+      <h4><i class="fas fa-list-ul"></i> Lista de Clientes</h4>
+      <div class="table-actions">
+        <button class="btn btn-sm btn-primary" id="add-client-button" data-testid="add-client-button"><i class="fas fa-plus"></i> Adicionar Cliente</button>
+        <button class="btn btn-sm btn-outline-primary" id="import-clients-button"><i class="fas fa-file-import"></i> Importar</button>
+        <button class="btn btn-sm btn-outline-primary" id="export-clients-csv-button"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+      </div>
+    </div>
+    <table class="table" id="clients-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>Status</th>
+          <th>Data Criação</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="clients-table-body">
+        <tr>
+          <td colspan="7" class="text-center loading-placeholder-row">
+            <div class="loading-placeholder large-placeholder"></div>
+            <div class="loading-placeholder medium-placeholder"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-pagination" id="clients-pagination">
+      <button class="btn btn-sm btn-outline" id="prev-page-clients">Anterior</button>
+      <span>Página <span id="current-page-clients">1</span> de <span id="total-pages-clients">1</span></span>
+      <button class="btn btn-sm btn-outline" id="next-page-clients">Próxima</button>
+    </div>
+  </div>
+</div>
+
+<div id="client-form-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content" data-testid="modal-content">
+    <div class="modal-header">
+      <h2 id="client-modal-title">Adicionar Novo Cliente</h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="client-form">
+        <input type="hidden" id="client-id">
+        <div class="form-group">
+          <label for="client-name" class="form-label required">Nome Completo:</label>
+          <input type="text" id="client-name" name="name" class="form-control" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-name"></span>
+        </div>
+        <div class="form-group">
+          <label for="client-email" class="form-label required">E-mail:</label>
+          <input type="email" id="client-email" name="email" class="form-control" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-email"></span>
+        </div>
+        <div class="form-group">
+          <label for="client-phone" class="form-label required">Telefone:</label>
+          <input type="text" id="client-phone" name="phone" class="form-control" placeholder="(XX) XXXXX-XXXX" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-phone"></span>
+        </div>
+        <div class="form-group">
+          <label for="client-address" class="form-label">Endereço:</label>
+          <input type="text" id="client-address" name="address" class="form-control">
+          <span class="text-danger" data-testid="validation-error-message" id="error-address"></span>
+        </div>
+        <div class="form-group">
+          <label for="client-cpf" class="form-label">CPF:</label>
+          <input type="text" id="client-cpf" name="cpf" class="form-control" placeholder="XXX.XXX.XXX-XX">
+          <span class="text-danger" data-testid="validation-error-message" id="error-cpf"></span>
+        </div>
+        <div class="form-group">
+          <label for="client-status" class="form-label">Status:</label>
+          <select id="client-status" name="isActive" class="form-control">
+            <option value="true">Ativo</option>
+            <option value="false">Inativo</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary modal-close">Cancelar</button>
+      <button class="btn btn-primary" id="save-client-button" data-testid="submit-client-button">Salvar Cliente</button>
+    </div>
+  </div>
+</div>
+
+<div id="client-details-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content" data-testid="modal-content">
+    <div class="modal-header">
+      <h2 id="client-details-title">Detalhes do Cliente: <span id="details-client-name" data-testid="client-detail-name"></span></h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>ID:</strong> <span id="details-client-id"></span></p>
+      <p><strong>E-mail:</strong> <span id="details-client-email" data-testid="client-detail-email"></span></p>
+      <p><strong>Telefone:</strong> <span id="details-client-phone"></span></p>
+      <p><strong>Endereço:</strong> <span id="details-client-address"></span></p>
+      <p><strong>CPF:</strong> <span id="details-client-cpf"></span></p>
+      <p><strong>Status:</strong> <span id="details-client-status"></span></p>
+      <p><strong>Data de Criação:</strong> <span id="details-client-created-at"></span></p>
+      <p><strong>Última Atualização:</strong> <span id="details-client-updated-at"></span></p>
+
+      <div class="client-contracts-section">
+        <h3>Contratos Associados</h3>
+        <ul id="details-client-contracts-list">
+          <li class="loading-placeholder small-placeholder"></li>
+        </ul>
+        <button class="btn btn-sm btn-outline-primary" id="view-all-contracts-button"><i class="fas fa-eye"></i> Ver Todos os Contratos</button>
+      </div>
+
+      <div class="client-budgets-section">
+        <h3>Orçamentos Associados</h3>
+        <ul id="details-client-budgets-list">
+          <li class="loading-placeholder small-placeholder"></li>
+        </ul>
+        <button class="btn btn-sm btn-outline-primary" id="view-all-budgets-button"><i class="fas fa-eye"></i> Ver Todos os Orçamentos</button>
+      </div>
+
+      <div class="client-actions-details">
+        <h3>Ações</h3>
+        <button class="btn btn-warning" id="edit-client-details-button" data-testid="edit-client-button"><i class="fas fa-edit"></i> Editar</button>
+        <button class="btn btn-danger" id="delete-client-button" data-testid="delete-client-button"><i class="fas fa-trash-alt"></i> Excluir</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary modal-close">Fechar</button>
+    </div>
+  </div>
+</div>

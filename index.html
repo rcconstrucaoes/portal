@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC Construções - Sistema de Gestão</title>
+    <meta name="description" content="Sistema completo de gestão para empresas de construção civil">
+    <meta name="author" content="marcelommvicente">
+    <meta name="last-modified" content="2025-07-30 17:47:00"> 
+    
+    <link rel="manifest" href="pwa_manifest.json">
+    <meta name="theme-color" content="#1a3a6c"> <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="assets/images/icon-192.png">
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/modern_main_css.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    </head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/#dashboard" class="nav-logo">
+                    <img src="assets/images/logo-rc.png" alt="RC Construções Logo">
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item active" data-page="dashboard">
+                        <a href="/#dashboard" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="clients">
+                        <a href="/#clients" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Clientes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="budgets">
+                        <a href="/#budgets" class="nav-link">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span>Orçamentos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="contracts">
+                        <a href="/#contracts" class="nav-link">
+                            <i class="fas fa-handshake"></i>
+                            <span>Contratos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="financial">
+                        <a href="/#financial" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Financeiro</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="reports">
+                        <a href="/#reports" class="nav-link">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Relatórios</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="settings">
+                        <a href="/#settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="suppliers">
+                        <a href="/#suppliers" class="nav-link">
+                            <i class="fas fa-truck-loading"></i>
+                            <span>Fornecedores</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-page="import">
+                        <a href="/import.html" class="nav-link"> <i class="fas fa-file-import"></i>
+                            <span>Importar Dados</span>
+                        </a>
+                    </li>
+                    <li class="nav-item logout-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Sair</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content" id="main-content">
+            <div class="page-container">
+                </div>
+        </main>
+    </div>
+
+    <div id="system-critical-error-display" style="display: none;"></div>
+
+    <div id="offline-notification" class="notification" style="display: none;">
+        <i class="fas fa-wifi-slash"></i>
+        <span>Você está offline. Algumas funcionalidades podem estar limitadas.</span>
+    </div>
+    
+    <script src="js/init_system_js.js" defer></script>
+    <script>
+        // Esta é a lógica de bootstrapping inicial do cliente.
+        // O ModernAppManager (via init_system_js.js) agora lida com a navegação e carregamento dos módulos.
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lógica para navegação da sidebar
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', (event) => {
+                    const page = item.dataset.page;
+                    // Se for um link para uma página HTML standalone (ex: import.html), permita a navegação direta
+                    if (page === 'import') {
+                        // Não previna o padrão para que o navegador navegue para import.html
+                        return; 
+                    }
+
+                    event.preventDefault(); // Impede o comportamento padrão do link para rotas hash
+
+                    // Remove a classe 'active' de todos os itens e adiciona ao clicado
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // Lógica para logout
+                    if (page === 'logout') {
+                        // Chama o método logout do AuthManager (se disponível)
+                        if (window.AuthManager && typeof window.AuthManager.logout === 'function') {
+                            window.AuthManager.logout().then(() => {
+                                // Após o logout, redireciona para a página de login
+                                window.location.href = '/login.html'; 
+                            }).catch(error => {
+                                console.error("Erro durante o logout:", error);
+                                if(window.NotificationsModule) window.NotificationsModule.showError("Logout", "Erro ao fazer logout.");
+                                window.location.href = '/login.html'; // Tenta redirecionar mesmo com erro
+                            });
+                        } else {
+                            // Fallback se AuthManager não estiver disponível
+                            console.warn('AuthManager não disponível para logout. Redirecionando diretamente.');
+                            window.location.href = '/login.html'; 
+                        }
+                    } else if (page) {
+                        // Altera o hash da URL para que o ModernAppManager possa rotear
+                        window.location.hash = page;
+                    }
+                });
+            });
+
+            // O ModernAppManager (inicializado por init_system_js.js) gerenciará o carregamento inicial do módulo
+            // e a navegação subsequente via hashchange.
+            // Não há necessidade de chamar loadContent('dashboard') aqui diretamente,
+            // pois o ModernAppManager fará isso com base no hash inicial (ou padrão 'dashboard').
+        });
+    </script>
+</body>
+</html>

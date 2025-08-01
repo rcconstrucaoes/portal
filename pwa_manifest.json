@@ -1,0 +1,104 @@
+{
+  "name": "RC Construções - Gestão de Obras",
+  "short_name": "RC App",
+  "description": "Um sistema completo para gestão de clientes, contratos, orçamentos e finanças para a RC Construções, com capacidade offline e experiência de aplicativo.",
+  "version": "5.1.0",
+  "created_at": "2025-07-30T13:23:59Z",
+  "created_by": "marcelommvicente",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eef2f6",
+  "theme_color": "#1a3a6c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "assets/images/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Novo Orçamento",
+      "short_name": "Orçamento",
+      "description": "Criar um novo orçamento rapidamente",
+      "url": "/#budgets",
+      "icons": [{ "src": "assets/images/shortcuts/budget.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Novo Cliente",
+      "short_name": "Cliente",
+      "description": "Cadastrar um novo cliente no sistema",
+      "url": "/#clients",
+      "icons": [{ "src": "assets/images/shortcuts/client.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Registrar Transação",
+      "short_name": "Transação",
+      "description": "Adicionar nova receita ou despesa",
+      "url": "/#financial",
+      "icons": [{ "src": "assets/images/shortcuts/financial.png", "sizes": "96x96", "type": "image/png" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Visão Geral do Dashboard"
+    },
+    {
+      "src": "assets/screenshots/clients-mobile.png",
+      "sizes": "360x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Lista de Clientes (Mobile)"
+    }
+  ]
+}

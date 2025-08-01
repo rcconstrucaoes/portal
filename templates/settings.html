@@ -1,0 +1,163 @@
+<div id="page-settings" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-cog"></i> Configurações do Sistema</h3>
+    <div class="header-description">
+      <p>Gerencie as configurações gerais do aplicativo e as preferências do usuário.</p>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    <div class="card settings-section">
+      <div class="card-header">
+        <h4><i class="fas fa-globe"></i> Configurações Gerais</h4>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="app-theme" class="form-label">Tema:</label>
+          <select id="app-theme" name="theme" class="form-control">
+            <option value="light">Claro</option>
+            <option value="dark">Escuro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="app-language" class="form-label">Idioma:</label>
+          <select id="app-language" name="language" class="form-control">
+            <option value="pt-BR">Português (Brasil)</option>
+            <option value="en-US">English (US)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notifications-enabled" class="form-label">Notificações:</label>
+          <div class="form-check">
+            <input type="checkbox" id="notifications-enabled" name="notificationsEnabled" class="form-check-input">
+            <label class="form-check-label" for="notifications-enabled">Receber notificações do sistema</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="offline-mode-enabled" class="form-label">Modo Offline:</label>
+          <div class="form-check">
+            <input type="checkbox" id="offline-mode-enabled" name="offlineModeEnabled" class="form-check-input">
+            <label class="form-check-label" for="offline-mode-enabled">Habilitar acesso offline ao aplicativo</label>
+          </div>
+        </div>
+        <div class="form-group text-right">
+          <button class="btn btn-primary" id="save-general-settings"><i class="fas fa-save"></i> Salvar Gerais</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card settings-section">
+      <div class="card-header">
+        <h4><i class="fas fa-chart-pie"></i> Configurações do Dashboard</h4>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="dashboard-date-range" class="form-label">Intervalo de Data Padrão:</label>
+          <select id="dashboard-date-range" name="defaultDateRange" class="form-control">
+            <option value="7-days">Últimos 7 dias</option>
+            <option value="30-days">Últimos 30 dias</option>
+            <option value="90-days">Últimos 90 dias</option>
+            <option value="current-month">Mês Atual</option>
+            <option value="custom">Customizado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="dashboard-show-summary" class="form-label">Resumo Rápido:</label>
+          <div class="form-check">
+            <input type="checkbox" id="dashboard-show-summary" name="showQuickSummary" class="form-check-input">
+            <label class="form-check-label" for="dashboard-show-summary">Exibir seção de Resumo Rápido</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="dashboard-show-activities" class="form-label">Atividades Recentes:</label>
+          <div class="form-check">
+            <input type="checkbox" id="dashboard-show-activities" name="showRecentActivities" class="form-check-input">
+            <label class="form-check-label" for="dashboard-show-activities">Exibir seção de Atividades Recentes</label>
+          </div>
+        </div>
+        <div class="form-group text-right">
+          <button class="btn btn-primary" id="save-dashboard-settings"><i class="fas fa-save"></i> Salvar Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card settings-section">
+      <div class="card-header">
+        <h4><i class="fas fa-cloud-upload-alt"></i> Sincronização e Backup</h4>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="sync-auto" class="form-label">Sincronização Automática:</label>
+          <div class="form-check">
+            <input type="checkbox" id="sync-auto" name="autoSync" class="form-check-input">
+            <label class="form-check-label" for="sync-auto">Ativar sincronização de dados em segundo plano</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sync-frequency" class="form-label">Frequência de Sincronização (minutos):</label>
+          <input type="number" id="sync-frequency" name="syncFrequencyMinutes" class="form-control" min="1" max="60" step="1">
+        </div>
+        <div class="form-group">
+          <label for="sync-wifi-only" class="form-label">Sincronizar apenas via Wi-Fi:</label>
+          <div class="form-check">
+            <input type="checkbox" id="sync-wifi-only" name="wifiOnly" class="form-check-input">
+            <label class="form-check-label" for="sync-wifi-only">Restringir sincronização a redes Wi-Fi</label>
+          </div>
+        </div>
+        <div class="form-group text-right">
+          <button class="btn btn-outline-primary" id="sync-now-button"><i class="fas fa-sync"></i> Sincronizar Agora</button>
+          <button class="btn btn-primary" id="save-sync-settings"><i class="fas fa-save"></i> Salvar Sincronização</button>
+        </div>
+        <hr>
+        <div class="form-group">
+          <label class="form-label">Backup do Banco de Dados Local:</label>
+          <button class="btn btn-info" id="export-db-json-button"><i class="fas fa-file-export"></i> Exportar Dados (JSON)</button>
+          <small class="form-text">Faça um backup de todos os dados do aplicativo para um arquivo JSON.</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Restaurar Backup:</label>
+          <input type="file" id="import-db-json-input" class="form-control">
+          <button class="btn btn-warning" id="import-db-json-button"><i class="fas fa-file-import"></i> Importar Dados (JSON)</button>
+          <small class="form-text text-danger">A importação sobrescreverá os dados existentes. Use com cautela!</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card settings-section">
+      <div class="card-header">
+        <h4><i class="fas fa-clipboard-list"></i> Logs e Erros (Avançado)</h4>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="log-level-select" class="form-label">Nível Mínimo de Log:</label>
+          <select id="log-level-select" name="minLogLevel" class="form-control">
+            <option value="0">DEBUG</option>
+            <option value="1">INFO</option>
+            <option value="2">SUCCESS</option>
+            <option value="3">WARN</option>
+            <option value="4">ERROR</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Saídas de Log:</label>
+          <div class="form-check">
+            <input type="checkbox" id="log-output-console" name="outputs" value="console" class="form-check-input">
+            <label class="form-check-label" for="log-output-console">Console do Navegador</label>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" id="log-output-indexeddb" name="outputs" value="indexeddb" class="form-check-input">
+            <label class="form-check-label" for="log-output-indexeddb">Banco de Dados Local (IndexedDB)</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="log-retention-days" class="form-label">Retenção de Logs (dias):</label>
+          <input type="number" id="log-retention-days" name="logRetentionDays" class="form-control" min="1" max="365" step="1">
+        </div>
+        <div class="form-group text-right">
+          <button class="btn btn-warning" id="test-error-button"><i class="fas fa-bug"></i> Gerar Erro de Teste</button>
+          <button class="btn btn-primary" id="save-log-settings"><i class="fas fa-save"></i> Salvar Logs</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,192 @@
+# RC Construções - Configuração de Alertas para Prometheus Alertmanager
+# Versão 5.1 - Revisado e Aprimorado
+#
+# Este arquivo define as regras de alerta que serão avaliadas pelo Prometheus.
+# Quando as condições de uma regra são atendidas, o Prometheus envia um alerta
+# para o Alertmanager, que então o roteia para os receptores configurados (email, Slack, PagerDuty, etc.).
+
+# =======================================================================================
+# GRUPOS DE ALERTAS
+# Organize alertas relacionados em grupos.
+# As regras dentro de um grupo são avaliadas em conjunto.
+# =======================================================================================
+
+groups:
+  # -----------------------------------------------------------------------------------
+  # Grupo: Alertas de Infraestrutura Essencial (DB, Redis, Servidor)
+  # -----------------------------------------------------------------------------------
+  - name: infra_alerts
+    rules:
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0 # Alerta se o PostgreSQL não estiver acessível
+        for: 1m # Espera 1 minuto antes de disparar o alerta
+        labels:
+          severity: critical
+          service: database
+          team: ops
+        annotations:
+          summary: "Banco de dados PostgreSQL está inacessível."
+          description: "O serviço de banco de dados PostgreSQL ({{ $labels.instance }}) não está respondendo. Verifique o status do container 'db'."
+
+      - alert: HighDatabaseConnections
+        expr: pg_stat_activity_count{datname!~"template.*|postgres"} > 50 # Mais de 50 conexões ativas (ajuste o threshold)
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+          team: ops
+        annotations:
+          summary: "Número elevado de conexões com o banco de dados."
+          description: "O banco de dados PostgreSQL ({{ $labels.instance }}) tem {{ $value }} conexões ativas, o que pode indicar um problema."
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0 # Alerta se o Redis não estiver acessível
+        for: 1m
+        labels:
+          severity: critical
+          service: cache
+          team: ops
+        annotations:
+          summary: "Servidor Redis está inacessível."
+          description: "O serviço Redis ({{ $labels.instance }}) não está respondendo. Verifique o status do container 'redis'."
+
+      - alert: RedisMemoryUsageHigh
+        expr: redis_memory_usage_bytes{job="redis"} / redis_info_total_system_memory_bytes{job="redis"} > 0.8 # Mais de 80% de uso de memória
+        for: 5m
+        labels:
+          severity: warning
+          service: cache
+          team: ops
+        annotations:
+          summary: "Uso de memória do Redis está alto."
+          description: "O Redis ({{ $labels.instance }}) está utilizando {{ $value | humanizePercentage }} da memória disponível."
+  
+      - alert: BackendDown
+        expr: up{job="backend"} == 0 # Alerta se o serviço de backend Node.js estiver inacessível
+        for: 1m
+        labels:
+          severity: critical
+          service: backend_api
+          team: devops
+        annotations:
+          summary: "Serviço de Backend Node.js está inacessível."
+          description: "O container do backend Node.js ({{ $labels.instance }}) não está respondendo."
+
+  # -----------------------------------------------------------------------------------
+  # Grupo: Alertas de Aplicação (Backend API, Frontend)
+  # -----------------------------------------------------------------------------------
+  - name: application_alerts
+    rules:
+      - alert: HighBackendErrorRate
+        # Métrica customizada do backend (assumindo que o `LoggerMiddleware` envia métricas para Prometheus/Redis)
+        # Ex: Contagem de erros HTTP do backend em 5 minutos > 10
+        # (Adapte a métrica ao que o seu backend/exporter de logs realmente expõe)
+        expr: sum(rate(http_requests_total{job="backend", status=~"5xx|4xx"}[5m])) by (instance) > 5 # Mais de 5 erros por segundo em 5 min
+        for: 2m
+        labels:
+          severity: warning
+          service: backend_api
+          team: dev
+        annotations:
+          summary: "Taxa de erros no Backend está alta."
+          description: "A API do backend ({{ $labels.instance }}) está retornando muitos erros HTTP (5xx/4xx). Taxa atual: {{ $value }} erros/s."
+
+      - alert: BackendLatencyHigh
+        # Exemplo: Latência média das requisições no backend (em segundos)
+        # (Adapte a métrica ao que o seu backend/exporter de logs/métricas realmente expõe)
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job="backend"}[5m])) > 0.5 # 99º percentil da latência > 0.5 segundos
+        for: 2m
+        labels:
+          severity: warning
+          service: backend_api
+          team: dev
+        annotations:
+          summary: "Latência do Backend está alta."
+          description: "A latência da API do backend ({{ $labels.instance }}) está elevada. O 99º percentil está em {{ $value }}s."
+      
+      - alert: FrontendDown
+        expr: up{job="frontend"} == 0 # Alerta se o serviço de frontend Nginx estiver inacessível
+        for: 1m
+        labels:
+          severity: critical
+          service: frontend_nginx
+          team: devops
+        annotations:
+          summary: "Serviço de Frontend Nginx está inacessível."
+          description: "O container do frontend Nginx ({{ $labels.instance }}) não está respondendo."
+      
+      - alert: HighFrontendErrorRate
+        # Exemplo: Erros de requisições de assets ou falha de acesso ao Nginx
+        expr: sum(rate(nginx_http_requests_total{job="frontend", status=~"4xx|5xx"}[5m])) by (instance) > 0 # Pelo menos 1 erro em 5 min
+        for: 5m
+        labels:
+          severity: warning
+          service: frontend_nginx
+          team: dev
+        annotations:
+          summary: "Taxa de erros no Frontend está alta."
+          description: "O Nginx do frontend ({{ $labels.instance }}) está retornando erros HTTP. Verifique logs do Nginx."
+
+  # -----------------------------------------------------------------------------------
+  # Grupo: Alertas de Recurso (CPU, Memória, Disco)
+  # -----------------------------------------------------------------------------------
+  - name: resource_alerts
+    rules:
+      - alert: HighContainerCPUUsage
+        expr: sum(rate(container_cpu_usage_seconds_total{container_name!="POD", container_name=~"rc_.*_prod"}[5m])) by (container_name) > 0.8 # Mais de 80% de uso de CPU
+        for: 5m
+        labels:
+          severity: warning
+          team: ops
+        annotations:
+          summary: "Uso de CPU do container está alto."
+          description: "O container {{ $labels.container_name }} está consumindo {{ $value | humanizePercentage }} de CPU."
+
+      - alert: HighContainerMemoryUsage
+        expr: sum(container_memory_usage_bytes{container_name!="POD", container_name=~"rc_.*_prod"}) by (container_name) / sum(container_spec_memory_limit_bytes{container_name!="POD", container_name=~"rc_.*_prod"}) by (container_name) > 0.9 # Mais de 90% de uso de memória
+        for: 5m
+        labels:
+          severity: critical
+          team: ops
+        annotations:
+          summary: "Uso de memória do container está crítico."
+          description: "O container {{ $labels.container_name }} está utilizando {{ $value | humanizePercentage }} da memória alocada. Pode ocorrer OOMKill."
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.10 # Menos de 10% de espaço em disco disponível na raiz
+        for: 15m
+        labels:
+          severity: critical
+          team: ops
+        annotations:
+          summary: "Espaço em disco baixo."
+          description: "O espaço disponível no disco ({{ $labels.instance }}) está abaixo de 10% ({{ $value | humanizePercentage }})."
+
+  # -----------------------------------------------------------------------------------
+  # Grupo: Alertas de Auditoria e Segurança (Exemplo)
+  # -----------------------------------------------------------------------------------
+  - name: audit_security_alerts
+    rules:
+      - alert: TooManyFailedLogins
+        # Contagem de tentativas de login falhas do backend (assumindo que o `AuthController` loga e métricas são expostas)
+        # Ex: Métrica do Redis `rate_limit:login_attempts:IP` ou similar
+        # (Adapte a métrica ao que o seu backend/exporter de logs realmente expõe)
+        expr: sum(rate(login_attempts_total{job="backend", status="failed"}[5m])) by (instance) > 5 # Mais de 5 logins falhos em 5 minutos
+        for: 1m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "Muitas tentativas de login falhas."
+          description: "Detectadas mais de 5 tentativas de login falhas em 5 minutos em {{ $labels.instance }}. Potencial ataque de força bruta."
+
+      - alert: UnauthorizedAccessAttempts
+        # Contagem de requisições 403 Forbidden
+        expr: sum(rate(http_requests_total{job="backend", status="403"}[5m])) by (instance) > 10 # Mais de 10 acessos negados em 5 minutos
+        for: 5m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "Muitas tentativas de acesso não autorizado."
+          description: "O backend ({{ $labels.instance }}) está recebendo muitas requisições 403 Forbidden. Potencial acesso não autorizado."

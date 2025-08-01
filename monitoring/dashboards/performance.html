@@ -1,0 +1,115 @@
+<div id="page-monitoring-performance" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-chart-line"></i> Dashboard de Performance</h3>
+    <div class="filter-controls">
+      <div class="date-range-picker">
+        <span>Período:</span>
+        <input type="date" id="performance-start-date">
+        <span>até</span>
+        <input type="date" id="performance-end-date">
+      </div>
+      <div class="select-filter">
+        <label for="metric-type-filter">Tipo de Métrica:</label>
+        <select id="metric-type-filter" class="form-control">
+          <option value="">Todos</option>
+          <option value="web-vitals">Web Vitals</option>
+          <option value="api-latency">Latência da API</option>
+          <option value="resource-load">Carga de Recursos</option>
+          <option value="custom">Customizadas</option>
+        </select>
+      </div>
+      <div class="search-filter">
+        <input type="text" id="metric-search-input" class="form-control" placeholder="Buscar métrica...">
+      </div>
+      <button class="btn btn-sm btn-primary" id="apply-performance-filter">Aplicar Filtros</button>
+      <button class="btn btn-sm btn-outline" id="clear-performance-filter">Limpar Filtros</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-tachometer-alt"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="avg-lcp">0ms</div>
+        <div class="stat-label">LCP Médio</div>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-mouse-pointer"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="avg-fid">0ms</div>
+        <div class="stat-label">FID Médio</div>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="avg-cls">0</div>
+        <div class="stat-label">CLS Médio</div>
+      </div>
+    </div>
+    <div class="stat-card primary">
+      <div class="stat-icon"><i class="fas fa-network-wired"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="avg-api-latency">0ms</div>
+        <div class="stat-label">Latência API Média</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-container large">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-area"></i> Web Vitals ao Longo do Tempo</h4>
+        <span class="chart-description">Largest Contentful Paint (LCP), First Input Delay (FID), Cumulative Layout Shift (CLS).</span>
+      </div>
+      <canvas id="web-vitals-timeseries-chart"></canvas>
+    </div>
+
+    <div class="chart-container medium">
+      <div class="chart-header">
+        <h4><i class="fas fa-server"></i> Latência da API por Endpoint</h4>
+        <span class="chart-description">Latência média e 95º percentil por rota da API.</span>
+      </div>
+      <canvas id="api-latency-chart"></canvas>
+    </div>
+
+    <div class="chart-container medium">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-pie"></i> Recursos Mais Lentos</h4>
+        <span class="chart-description">Distribuição do tempo de carregamento para recursos (imagens, scripts, CSS).</span>
+      </div>
+      <canvas id="slow-resources-chart"></canvas>
+    </div>
+  </div>
+
+  <div class="dashboard-bottom-grid">
+    <div class="recent-activities">
+      <h4><i class="fas fa-list-alt"></i> Atividades de Performance Críticas</h4>
+      <ul id="critical-performance-list" class="activity-list">
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+      </ul>
+    </div>
+
+    <div class="quick-summary">
+      <h4><i class="fas fa-table"></i> Top 10 Requisições Mais Lentas</h4>
+      <div class="table-container-compact">
+        <table class="table table-sm" id="slow-requests-table">
+          <thead>
+            <tr>
+              <th>URL</th>
+              <th>Método</th>
+              <th>Duração (ms)</th>
+            </tr>
+          </thead>
+          <tbody id="slow-requests-table-body">
+            <tr><td colspan="3" class="text-center loading-placeholder-row-compact"><div class="loading-placeholder small-placeholder"></div></td></tr>
+            <tr><td colspan="3" class="text-center loading-placeholder-row-compact"><div class="loading-placeholder small-placeholder"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

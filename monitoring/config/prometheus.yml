@@ -1,0 +1,85 @@
+# RC Construções - Configuração Principal do Prometheus
+# Versão 5.1 - Revisado e Aprimorado
+#
+# Este arquivo configura o servidor Prometheus para coletar métricas,
+# avaliar regras de alerta e se integrar com o Alertmanager.
+
+global:
+  # Intervalo padrão para coletar métricas dos targets
+  scrape_interval: 15s #
+  # Intervalo padrão para reavaliar as regras de alerta
+  evaluation_interval: 15s #
+
+# Configuração para o Alertmanager
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093 # Endereço do serviço Alertmanager no Docker Compose network
+
+# Regras de alerta
+# Carrega as definições de alerta do arquivo alerts.yml
+rule_files:
+  - "alerts.yml" #
+
+# Configuração de coleta de métricas (scrape_configs)
+scrape_configs:
+  # =========================================================================
+  # Monitoramento do Próprio Prometheus
+  # =========================================================================
+  - job_name: "prometheus"
+    scrape_interval: 5s # Monitora a cada 5 segundos
+    static_configs:
+      - targets: ["localhost:9090"] # Porta padrão do Prometheus
+
+  # =========================================================================
+  # Monitoramento de Hosts (via Node Exporter)
+  # Este job coleta métricas do sistema operacional do host onde os containers rodam.
+  # =========================================================================
+  - job_name: "node_exporter"
+    static_configs:
+      - targets: ["node-exporter:9100"] # Endereço do serviço Node Exporter
+
+  # =========================================================================
+  # Monitoramento de Containers Docker (via cAdvisor)
+  # cAdvisor é um coletor de métricas nativo de containers.
+  # =========================================================================
+  - job_name: "cadvisor"
+    static_configs:
+      - targets: ["cadvisor:8080"] # Endereço do serviço cAdvisor
+
+  # =========================================================================
+  # Monitoramento do PostgreSQL (via Postgres Exporter)
+  # =========================================================================
+  - job_name: "postgres"
+    static_configs:
+      - targets: ["postgres-exporter:9187"] # Endereço do serviço Postgres Exporter
+
+  # =========================================================================
+  # Monitoramento do Redis (via Redis Exporter)
+  # =========================================================================
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis-exporter:9121"] # Endereço do serviço Redis Exporter
+
+  # =========================================================================
+  # Monitoramento do Backend Node.js (assumindo que expõe métricas)
+  # Seu backend (se estiver usando `prom-client` ou similar) deve expor métricas na porta 3000 ou outra.
+  # =========================================================================
+  - job_name: "backend"
+    static_configs:
+      - targets: ["backend:3000"] # Endereço do serviço backend e porta de métricas (padrão)
+    metrics_path: /metrics # Caminho onde o backend expõe as métricas Prometheus
+    # Se você tiver um exporter que coleta logs do backend e expõe métricas,
+    # ou se o backend direto expõe health checks, você pode ajustar aqui.
+
+  # =========================================================================
+  # Monitoramento do Frontend Nginx
+  # Assumindo que o Nginx está expondo métricas, talvez via ngx_http_stub_status_module
+  # ou um exporter como o Nginx VTS Exporter.
+  # =========================================================================
+  - job_name: "frontend"
+    static_configs:
+      - targets: ["frontend:80"] # Endereço do serviço frontend (Nginx)
+    metrics_path: /nginx_metrics # Caminho onde o Nginx expõe as métricas (ex: /metrics ou /stub_status)
+    # Pode ser necessário configurar o Nginx para expor /nginx_metrics (veja nginx.conf)

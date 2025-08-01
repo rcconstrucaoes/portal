@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC Construções - Relatórios Completos</title>
+    <meta name="description" content="Gere e visualize relatórios detalhados do sistema RC Construções.">
+    <meta name="author" content="marcelommvicente">
+    <meta name="theme-color" content="#1a3a6c"> <link rel="manifest" href="pwa_manifest.json">
+    <link rel="apple-touch-icon" href="assets/images/icon-192.png">
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/modern_main_css.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/notifications.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/#dashboard" class="nav-logo">
+                    <img src="assets/images/logo-rc.png" alt="RC Construções Logo">
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item" data-page="dashboard">
+                        <a href="/#dashboard" class="nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                    </li>
+                    <li class="nav-item" data-page="clients">
+                        <a href="/#clients" class="nav-link"><i class="fas fa-users"></i><span>Clientes</span></a>
+                    </li>
+                    <li class="nav-item" data-page="budgets">
+                        <a href="/#budgets" class="nav-link"><i class="fas fa-file-invoice-dollar"></i><span>Orçamentos</span></a>
+                    </li>
+                    <li class="nav-item" data-page="contracts">
+                        <a href="/#contracts" class="nav-link"><i class="fas fa-handshake"></i><span>Contratos</span></a>
+                    </li>
+                    <li class="nav-item" data-page="financial">
+                        <a href="/#financial" class="nav-link"><i class="fas fa-chart-line"></i><span>Financeiro</span></a>
+                    </li>
+                    <li class="nav-item active" data-page="reports">
+                        <a href="/#reports" class="nav-link"><i class="fas fa-chart-pie"></i><span>Relatórios</span></a>
+                    </li>
+                    <li class="nav-item" data-page="settings">
+                        <a href="/#settings" class="nav-link"><i class="fas fa-cog"></i><span>Configurações</span></a>
+                    </li>
+                    <li class="nav-item logout-item">
+                        <a href="/login.html" class="nav-link"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content" id="main-content">
+            <div class="page-container">
+                <div id="page-reports" class="page-dashboard-content">
+                    <div class="reports-header dashboard-header">
+                        <h3><i class="fas fa-chart-bar"></i> Central de Relatórios</h3>
+                        <div class="header-description">
+                            <p>Analise o desempenho do seu negócio com relatórios detalhados e personalizados.</p>
+                        </div>
+                    </div>
+
+                    <div class="report-filters card">
+                        <div class="card-header">
+                            <h4><i class="fas fa-filter"></i> Gerar Novo Relatório</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-grid three-columns">
+                                <div class="form-group">
+                                    <label for="report-area-select" class="form-label required">Área do Relatório:</label>
+                                    <select id="report-area-select" class="form-control" name="reportArea" required>
+                                        <option value="" disabled selected>Selecione uma área</option>
+                                        <option value="financial">Financeiro</option>
+                                        <option value="clients">Clientes</option>
+                                        <option value="budgets">Orçamentos</option>
+                                        <option value="contracts">Contratos</option>
+                                        <option value="users">Usuários</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="report-type-select" class="form-label required">Tipo de Relatório:</label>
+                                    <select id="report-type-select" class="form-control" name="reportType" required>
+                                        <option value="" disabled selected>Selecione um tipo</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Período:</label>
+                                    <div class="date-range-inputs">
+                                        <input type="date" id="report-start-date" class="form-control" name="startDate">
+                                        <span class="date-separator">até</span>
+                                        <input type="date" id="report-end-date" class="form-control" name="endDate">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-grid two-columns">
+                                <div class="form-group">
+                                    <label for="report-format-select" class="form-label required">Formato de Saída:</label>
+                                    <select id="report-format-select" class="form-control" name="format" required>
+                                        <option value="html" selected>Visualizar (HTML)</option>
+                                        <option value="csv">Exportar CSV</option>
+                                        <option value="pdf">Exportar PDF</option>
+                                        <option value="json">Exportar JSON (Dados Brutos)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="report-group-by" class="form-label">Agrupar por (Opcional):</label>
+                                    <select id="report-group-by" class="form-control" name="groupBy">
+                                        <option value="">Nenhum</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="filter-actions text-right">
+                                <button id="generate-report-btn" class="btn btn-primary"><i class="fas fa-cogs"></i> Gerar Relatório</button>
+                                <button id="clear-report-filters-btn" class="btn btn-outline-secondary"><i class="fas fa-broom"></i> Limpar Filtros</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="report-content card">
+                        <div class="card-header">
+                            <h4 id="report-output-title">Resultado do Relatório</h4>
+                            <div class="table-actions">
+                                <button class="btn btn-sm btn-outline-primary" id="download-report-btn" style="display: none;"><i class="fas fa-download"></i> Download</button>
+                                <button class="btn btn-sm btn-outline-danger" id="clear-report-output-btn" style="display: none;"><i class="fas fa-times"></i> Limpar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="report-output-area" class="report-output-area">
+                                <p class="text-center text-muted" id="initial-report-message">Selecione os filtros acima e clique em "Gerar Relatório" para visualizar os dados.</p>
+                                <div class="loading-placeholder-report" style="display: none;">
+                                    <div class="loading-spinner"></div>
+                                    <p>Gerando relatório...</p>
+                                </div>
+                                <div id="report-error-message" class="alert alert-danger" style="display: none;"></div>
+                                
+                                <div class="report-table-container" style="display: none;">
+                                    <table class="table table-bordered" id="generated-report-table">
+                                        <thead>
+                                            <tr id="report-table-headers"></tr>
+                                        </thead>
+                                        <tbody id="report-table-body"></tbody>
+                                    </table>
+                                </div>
+
+                                <div class="report-chart-container" style="display: none;">
+                                    <canvas id="generated-report-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="offline-notification" class="notification" style="display: none;">
+        <i class="fas fa-wifi-slash"></i>
+        <span>Você está offline. Algumas funcionalidades podem estar limitadas.</span>
+    </div>
+
+    <script src="js/core/settings.js" defer></script>
+    <script src="js/init_system_js.js" defer></script>
+    <script src="js/modern_app_js.js" defer></script>
+    <script src="js/dashboard-enhancements.js" defer></script>
+    <script src="js/modules/reports.js" defer></script> <script>
+        // Lógica de navegação e carregamento do módulo de relatórios quando a página é acessada diretamente.
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Inicializa a navegação da sidebar (se não for feita pelo ModernAppManager)
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                // Adiciona um listener para navegação, mas se a página já está carregada, não recarrega via AJAX
+                item.addEventListener('click', (event) => {
+                    const page = item.dataset.page;
+                    if (page && page !== 'logout') {
+                        event.preventDefault(); // Impede a navegação padrão
+                        window.location.hash = page; // Altera o hash e a navegação será tratada pelo ModernAppManager
+                        // A classe 'active' da sidebar é atualizada pelo ModernAppManager.
+                    } else if (page === 'logout') {
+                        // Lógica de logout (se AuthManager estiver disponível)
+                        event.preventDefault();
+                        if (window.AuthManager && typeof window.AuthManager.logout === 'function') {
+                            window.AuthManager.logout().then(() => {
+                                window.location.href = '/login.html'; // Redireciona após logout
+                            });
+                        } else {
+                            window.location.href = '/login.html';
+                        }
+                    }
+                });
+            });
+
+            // Marca o item de navegação de relatórios como ativo
+            document.querySelector('.nav-item[data-page="reports"]')?.classList.add('active');
+
+            // Chamada do setupDashboardElements e loadDashboardPage para o dashboard
+            // Note: Para uma página standalone como reports.html, você chamaria o init do seu módulo de relatórios aqui.
+            // O ModernAppManager (via init_system_js.js) já deve ter inicializado todos os módulos core.
+            // Aqui, apenas chamamos as funções do módulo de relatórios que interagem com o DOM.
+
+            if (window.ReportsModule && typeof window.ReportsModule.init === 'function') {
+                // Como ReportsModule.init() já é chamado pelo init_system_js.js,
+                // precisamos apenas chamar a lógica de renderização e eventos da página de relatórios.
+                // Idealmente, ReportsModule.init() configura os listeners para os botões e selects.
+                // Ou você pode ter uma função específica como ReportsModule.setupUIEvents().
+                // Por simplicidade, vamos chamar uma função para "ativar" a UI se o módulo já estiver inicializado.
+                
+                // Exemplo: Simular o carregamento de dados da UI de relatórios
+                // (Se ReportsModule tiver um método para renderizar a UI)
+                // ReportsModule.loadReportsPage(); // Se tiver uma função assim
+                
+                // Se o ReportsModule já está inicializado, configure os eventos aqui.
+                // Isso normalmente estaria no corpo do ReportsModule, reagindo ao DOMContentLoaded.
+                // Como este é um arquivo HTML standalone, ele precisa iniciar os listeners.
+                // Este script final faz a amarração inicial.
+                const reportAreaSelect = document.getElementById('report-area-select');
+                const reportTypeSelect = document.getElementById('report-type-select');
+                const generateReportBtn = document.getElementById('generate-report-btn');
+                const initialReportMessage = document.getElementById('initial-report-message');
+                const reportOutputArea = document.getElementById('report-output-area');
+                const generatedReportTable = document.getElementById('generated-report-table');
+                const generatedReportChart = document.getElementById('generated-report-chart');
+                const reportTableHeaders = document.getElementById('report-table-headers');
+                const reportTableBody = document.getElementById('report-table-body');
+                const downloadReportBtn = document.getElementById('download-report-btn');
+                const clearReportOutputBtn = document.getElementById('clear-report-output-btn');
+                const loadingPlaceholderReport = document.querySelector('.loading-placeholder-report');
+                const reportErrorMessage = document.getElementById('report-error-message');
+                
+                // Preenche os tipos de relatório ao selecionar a área
+                reportAreaSelect.addEventListener('change', (event) => {
+                    const selectedArea = event.target.value;
+                    reportTypeSelect.innerHTML = '<option value="" disabled selected>Selecione um tipo</option>'; // Limpa opções
+                    const availableReports = window.ReportsModule.getAvailableReports();
+                    if (availableReports[selectedArea]) {
+                        for (const typeKey in availableReports[selectedArea]) {
+                            const option = document.createElement('option');
+                            option.value = typeKey;
+                            option.textContent = availableReports[selectedArea][typeKey];
+                            reportTypeSelect.appendChild(option);
+                        }
+                    }
+                });
+
+                // Lógica para gerar o relatório
+                generateReportBtn.addEventListener('click', async () => {
+                    const area = reportAreaSelect.value;
+                    const type = reportTypeSelect.value;
+                    const format = document.getElementById('report-format-select').value;
+                    const startDate = document.getElementById('report-start-date').value;
+                    const endDate = document.getElementById('report-end-date').value;
+                    const groupBy = document.getElementById('report-group-by').value;
+
+                    if (!area || !type) {
+                        window.NotificationsModule.showWarning('Filtros Incompletos', 'Por favor, selecione a Área e o Tipo de Relatório.');
+                        return;
+                    }
+
+                    initialReportMessage.style.display = 'none';
+                    reportErrorMessage.style.display = 'none';
+                    loadingPlaceholderReport.style.display = 'flex'; // Mostra spinner
+                    reportOutputArea.querySelector('.report-table-container').style.display = 'none';
+                    reportOutputArea.querySelector('.report-chart-container').style.display = 'none';
+                    downloadReportBtn.style.display = 'none';
+                    clearReportOutputBtn.style.display = 'none';
+
+
+                    try {
+                        let reportData = await window.ReportsModule.generate(area, type, { startDate, endDate, groupBy });
+
+                        loadingPlaceholderReport.style.display = 'none'; // Esconde spinner
+
+                        if (format === 'html') {
+                            // Renderiza a tabela HTML
+                            reportOutputArea.querySelector('.report-table-container').style.display = 'block';
+                            reportTableHeaders.innerHTML = '';
+                            reportTableBody.innerHTML = '';
+
+                            if (reportData.length > 0) {
+                                // Assume que o primeiro objeto tem as chaves para os cabeçalhos
+                                const headers = Object.keys(reportData[0]);
+                                headers.forEach(header => {
+                                    const th = document.createElement('th');
+                                    th.textContent = window.UtilsManager.capitalizeFirstLetter(header.replace(/([A-Z])/g, ' $1').trim()); // Formata para leitura
+                                    reportTableHeaders.appendChild(th);
+                                });
+
+                                reportData.forEach(row => {
+                                    const tr = document.createElement('tr');
+                                    headers.forEach(header => {
+                                        const td = document.createElement('td');
+                                        let value = row[header];
+                                        // Formatação de valores específicos
+                                        if (typeof value === 'number' && header.includes('amount') || header.includes('value') || header.includes('balance') || header.includes('revenue') || header.includes('expense') || header.includes('net')) {
+                                            td.textContent = window.UtilsManager.formatCurrency(value);
+                                        } else if (typeof value === 'number' && header.includes('Date') || header.includes('At')) {
+                                            td.textContent = window.UtilsManager.formatDate(value, 'DD/MM/YYYY HH:mm');
+                                        } else {
+                                            td.textContent = value;
+                                        }
+                                        tr.appendChild(td);
+                                    });
+                                    reportTableBody.appendChild(tr);
+                                });
+                                downloadReportBtn.style.display = 'inline-block';
+                                clearReportOutputBtn.style.display = 'inline-block';
+                            } else {
+                                reportTableBody.innerHTML = '<tr><td colspan="' + headers.length + '" class="text-center">Nenhum dado encontrado para o relatório.</td></tr>';
+                            }
+                        } else if (format === 'csv') {
+                            await window.ReportsModule.exportToPdf(area, type, { startDate, endDate, groupBy }); // ReportsModule exportToPdf cuida do CSV também
+                            window.NotificationsModule.showSuccess('Exportação Concluída', 'O download do relatório CSV foi iniciado.');
+                            loadingPlaceholderReport.style.display = 'none';
+                            initialReportMessage.style.display = 'block';
+                        } else if (format === 'pdf') {
+                            await window.ReportsModule.exportToPdf(area, type, { startDate, endDate, groupBy });
+                            window.NotificationsModule.showSuccess('Exportação Concluída', 'O download do relatório PDF foi iniciado.');
+                            loadingPlaceholderReport.style.display = 'none';
+                            initialReportMessage.style.display = 'block';
+                        } else if (format === 'json') {
+                            // Implementar download JSON
+                            const filename = `${area}_${type}_${window.UtilsManager.formatDate(Date.now(), 'YYYYMMDD_HHmmss')}.json`;
+                            const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json;charset=utf-8;' });
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.setAttribute('download', filename);
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            window.NotificationsModule.showSuccess('Exportação Concluída', 'O download do relatório JSON foi iniciado.');
+                            loadingPlaceholderReport.style.display = 'none';
+                            initialReportMessage.style.display = 'block';
+                        }
+
+                    } catch (error) {
+                        loadingPlaceholderReport.style.display = 'none';
+                        reportErrorMessage.style.display = 'block';
+                        reportErrorMessage.textContent = `Erro ao gerar relatório: ${error.message}`;
+                        window.NotificationsModule.showError('Erro no Relatório', `Falha ao gerar o relatório: ${error.message}`);
+                    }
+                });
+
+                // Limpar resultados do relatório
+                clearReportOutputBtn.addEventListener('click', () => {
+                    initialReportMessage.style.display = 'block';
+                    reportOutputArea.querySelector('.report-table-container').style.display = 'none';
+                    reportOutputArea.querySelector('.report-chart-container').style.display = 'none';
+                    downloadReportBtn.style.display = 'none';
+                    clearReportOutputBtn.style.display = 'none';
+                    reportTableHeaders.innerHTML = '';
+                    reportTableBody.innerHTML = '';
+                    reportErrorMessage.style.display = 'none';
+                });
+
+                // Limpar filtros do formulário
+                document.getElementById('clear-report-filters-btn').addEventListener('click', () => {
+                    reportAreaSelect.value = '';
+                    reportTypeSelect.innerHTML = '<option value="" disabled selected>Selecione um tipo</option>';
+                    document.getElementById('report-start-date').value = '';
+                    document.getElementById('report-end-date').value = '';
+                    document.getElementById('report-format-select').value = 'html';
+                    document.getElementById('report-group-by').value = '';
+                });
+
+            } else {
+                console.error('ReportsModule não disponível para configurar a UI de relatórios.');
+                document.getElementById('initial-report-message').textContent = 'Erro: Módulo de Relatórios não carregado. Recarregue a página.';
+            }
+
+            // Init para a notificação offline
+            if (window.dashboardEnhancements && typeof window.dashboardEnhancements.updateOnlineStatus === 'function') {
+                window.dashboardEnhancements.updateOnlineStatus();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC Construções - Importação de Dados</title>
+    <meta name="description" content="Importe dados para o sistema RC Construções.">
+    <meta name="author" content="marcelommvicente">
+    <meta name="theme-color" content="#1a3a6c"> <link rel="manifest" href="pwa_manifest.json">
+    <link rel="apple-touch-icon" href="assets/images/icon-192.png">
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/modern_main_css.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/notifications.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/#dashboard" class="nav-logo">
+                    <img src="assets/images/logo-rc.png" alt="RC Construções Logo">
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item" data-page="dashboard">
+                        <a href="/#dashboard" class="nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                    </li>
+                    <li class="nav-item" data-page="clients">
+                        <a href="/#clients" class="nav-link"><i class="fas fa-users"></i><span>Clientes</span></a>
+                    </li>
+                    <li class="nav-item" data-page="budgets">
+                        <a href="/#budgets" class="nav-link"><i class="fas fa-file-invoice-dollar"></i><span>Orçamentos</span></a>
+                    </li>
+                    <li class="nav-item" data-page="contracts">
+                        <a href="/#contracts" class="nav-link"><i class="fas fa-handshake"></i><span>Contratos</span></a>
+                    </li>
+                    <li class="nav-item" data-page="financial">
+                        <a href="/#financial" class="nav-link"><i class="fas fa-chart-line"></i><span>Financeiro</span></a>
+                    </li>
+                    <li class="nav-item" data-page="reports">
+                        <a href="/#reports" class="nav-link"><i class="fas fa-chart-pie"></i><span>Relatórios</span></a>
+                    </li>
+                    <li class="nav-item" data-page="settings">
+                        <a href="/#settings" class="nav-link"><i class="fas fa-cog"></i><span>Configurações</span></a>
+                    </li>
+                    <li class="nav-item logout-item">
+                        <a href="/login.html" class="nav-link"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content" id="main-content">
+            <div class="page-container">
+                <div id="page-import" class="page-dashboard-content">
+                    <div class="dashboard-header">
+                        <h3><i class="fas fa-file-import"></i> Importação de Dados</h3>
+                        <div class="header-description">
+                            <p>Selecione uma tabela e um arquivo para importar dados para o sistema.</p>
+                        </div>
+                    </div>
+
+                    <div class="card import-section">
+                        <div class="card-header">
+                            <h4><i class="fas fa-upload"></i> Carregar Arquivo de Dados</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="import-form">
+                                <div class="form-group">
+                                    <label for="import-table-select" class="form-label required">Tabela de Destino:</label>
+                                    <select id="import-table-select" class="form-control" name="tableName" required>
+                                        <option value="" disabled selected>Selecione a tabela</option>
+                                        <option value="clients">Clientes</option>
+                                        <option value="budgets">Orçamentos</option>
+                                        <option value="contracts">Contratos</option>
+                                        <option value="financial">Financeiro</option>
+                                        <option value="users">Usuários</option>
+                                        <option value="suppliers">Fornecedores</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="import-file-input" class="form-label required">Arquivo (CSV ou JSON):</label>
+                                    <input type="file" id="import-file-input" name="importFile" class="form-control" accept=".csv, .json" required>
+                                    <small class="form-text">Formatos suportados: CSV e JSON. Para CSV, a primeira linha deve ser o cabeçalho.</small>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="import-skip-duplicates" name="skipDuplicates" class="form-check-input" checked>
+                                        <label class="form-check-label" for="import-skip-duplicates">Ignorar registros duplicados (se houver).</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="import-dry-run" name="dryRun" class="form-check-input">
+                                        <label class="form-check-label" for="import-dry-run">Modo de Teste (Dry Run): Não salve, apenas valide.</label>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-primary" id="start-import-button"><i class="fas fa-upload"></i> Iniciar Importação</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card import-results">
+                        <div class="card-header">
+                            <h4><i class="fas fa-info-circle"></i> Resultados da Importação</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="import-status-message" class="alert alert-info" style="display: none;"></div>
+                            <div id="import-progress-bar" class="progress-bar-container" style="display: none;">
+                                <div class="progress-bar-fill"></div>
+                                <span class="progress-bar-text">0%</span>
+                            </div>
+                            <ul id="import-log-list" class="log-list">
+                                <li class="text-muted">Aguardando início da importação...</li>
+                            </ul>
+                            <div id="import-summary" style="display: none;">
+                                <p><strong>Total de Registros no Arquivo:</strong> <span id="summary-total-records">0</span></p>
+                                <p><strong>Registros Importados com Sucesso:</strong> <span id="summary-imported-count">0</span></p>
+                                <p><strong>Registros com Erros/Duplicados:</strong> <span id="summary-error-count">0</span></p>
+                                <button class="btn btn-sm btn-outline-secondary" id="view-import-errors-btn" style="display: none;">Ver Detalhes dos Erros</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div id="offline-notification" class="notification" style="display: none;">
+        <i class="fas fa-wifi-slash"></i>
+        <span>Você está offline. Algumas funcionalidades podem estar limitadas.</span>
+    </div>
+
+    <script src="js/core/settings.js" defer></script>
+    <script src="js/init_system_js.js" defer></script>
+    <script src="js/modern_app_js.js" defer></script>
+    <script src="js/dashboard-enhancements.js" defer></script>
+    <script src="js/modules/import-export.js" defer></script> <script src="js/core/utils.js" defer></script> <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Marca o item de navegação de importação como ativo (se houver na sidebar)
+            document.querySelector('.nav-item[data-page="import"]')?.classList.add('active');
+
+            // --- Gerenciamento da UI e Eventos do Formulário de Importação ---
+            const importForm = document.getElementById('import-form');
+            const importTableSelect = document.getElementById('import-table-select');
+            const importFileInput = document.getElementById('import-file-input');
+            const startImportButton = document.getElementById('start-import-button');
+            const importStatusMessage = document.getElementById('import-status-message');
+            const importProgressBar = document.getElementById('import-progress-bar');
+            const progressBarFill = importProgressBar.querySelector('.progress-bar-fill');
+            const progressBarText = importProgressBar.querySelector('.progress-bar-text');
+            const importLogList = document.getElementById('import-log-list');
+            const importSummary = document.getElementById('import-summary');
+            const summaryTotalRecords = document.getElementById('summary-total-records');
+            const summaryImportedCount = document.getElementById('summary-imported-count');
+            const summaryErrorCount = document.getElementById('summary-error-count');
+            const viewImportErrorsBtn = document.getElementById('view-import-errors-btn');
+
+            let currentErrors = []; // Para armazenar erros detalhados da importação
+
+            const showMessage = (msg, type = 'info') => {
+                importStatusMessage.className = `alert alert-${type}`;
+                importStatusMessage.textContent = msg;
+                importStatusMessage.style.display = 'block';
+            };
+
+            const updateProgressBar = (progress) => {
+                progressBarFill.style.width = `${progress}%`;
+                progressBarText.textContent = `${progress}%`;
+            };
+
+            const addLogEntry = (msg, type = 'info') => {
+                const li = document.createElement('li');
+                li.className = `log-entry log-${type}`;
+                li.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+                importLogList.appendChild(li);
+                importLogList.scrollTop = importLogList.scrollHeight; // Scroll para o final
+            };
+
+            importForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                // Limpa o estado anterior
+                importLogList.innerHTML = '';
+                importSummary.style.display = 'none';
+                importStatusMessage.style.display = 'none';
+                importProgressBar.style.display = 'none';
+                viewImportErrorsBtn.style.display = 'none';
+                currentErrors = [];
+
+                const tableName = importTableSelect.value;
+                const file = importFileInput.files[0];
+                const skipDuplicates = document.getElementById('import-skip-duplicates').checked;
+                const dryRun = document.getElementById('import-dry-run').checked;
+
+                if (!tableName || !file) {
+                    showMessage('Por favor, selecione uma tabela e um arquivo.', 'danger');
+                    return;
+                }
+
+                showMessage('Preparando importação...', 'info');
+                importProgressBar.style.display = 'block';
+                updateProgressBar(0);
+                startImportButton.disabled = true;
+
+                addLogEntry(`Iniciando importação para a tabela "${tableName}" do arquivo "${file.name}"...`);
+
+                try {
+                    // Simular progresso
+                    updateProgressBar(10);
+                    addLogEntry('Lendo conteúdo do arquivo...');
+
+                    // Chama o módulo de importação
+                    const result = await window.ImportExportModule.importData(file, tableName, { skipDuplicates, dryRun, onProgress: updateProgressBar });
+                    
+                    updateProgressBar(100);
+
+                    if (result.success) {
+                        showMessage('Importação concluída com sucesso!', 'success');
+                        addLogEntry(`Importação finalizada. ${result.importedCount} de ${result.totalRecords} registros importados.`, 'success');
+                    } else {
+                        showMessage('Importação concluída com erros.', 'warning');
+                        addLogEntry(`Importação finalizada com ${result.errors.length} erros.`, 'warning');
+                        result.errors.forEach(err => addLogEntry(`Erro: ${err}`, 'error'));
+                        currentErrors = result.errors;
+                        if (currentErrors.length > 0) {
+                            viewImportErrorsBtn.style.display = 'inline-block';
+                        }
+                    }
+
+                    // Exibe o resumo final
+                    summaryTotalRecords.textContent = result.totalRecords || file.size; // totalRecords pode vir do parser
+                    summaryImportedCount.textContent = result.importedCount;
+                    summaryErrorCount.textContent = result.errors.length;
+                    importSummary.style.display = 'block';
+
+                } catch (error) {
+                    updateProgressBar(0);
+                    showMessage(`Erro fatal na importação: ${error.message}`, 'danger');
+                    addLogEntry(`Erro fatal: ${error.message}`, 'error');
+                    window.NotificationsModule.showError('Erro de Importação', `Falha na importação de dados: ${error.message}`);
+                } finally {
+                    startImportButton.disabled = false;
+                }
+            });
+
+            // Adiciona evento para ver detalhes dos erros (pode abrir outro modal ou expandir)
+            viewImportErrorsBtn.addEventListener('click', () => {
+                let errorDetails = "Detalhes dos Erros de Importação:\n\n";
+                currentErrors.forEach((err, index) => {
+                    errorDetails += `Erro ${index + 1}: ${err}\n`;
+                });
+                alert(errorDetails); // Usar um modal Swal.fire ou customizado em produção
+            });
+
+            // Init para a notificação offline
+            if (window.dashboardEnhancements && typeof window.dashboardEnhancements.updateOnlineStatus === 'function') {
+                window.dashboardEnhancements.updateOnlineStatus();
+            }
+        });
+    </script>
+</body>
+</html>

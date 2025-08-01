@@ -1,0 +1,81 @@
+<div id="page-monitoring-errors" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-exclamation-triangle"></i> Dashboard de Erros</h3>
+    <div class="date-range-picker">
+      <span>Período:</span>
+      <input type="date" id="errors-start-date">
+      <span>até</span>
+      <input type="date" id="errors-end-date">
+      <button class="btn btn-sm btn-primary" id="apply-errors-filter">Aplicar</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card error">
+      <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="total-errors-count">0</div>
+        <div class="stat-label">Erros Totais</div>
+      </div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="critical-errors-count">0</div>
+        <div class="stat-label">Erros Críticos</div>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-info-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="warnings-count">0</div>
+        <div class="stat-label">Avisos</div>
+      </div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="resolved-errors-count">0</div>
+        <div class="stat-label">Erros Resolvidos</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-container large">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-bar"></i> Tendência de Erros por Nível</h4>
+        <span class="chart-description">Contagem de erros por severidade ao longo do tempo.</span>
+      </div>
+      <canvas id="error-severity-chart"></canvas>
+    </div>
+
+    <div class="chart-container medium">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-pie"></i> Distribuição de Erros por Contexto</h4>
+        <span class="chart-description">Principais módulos ou áreas com erros.</span>
+      </div>
+      <canvas id="error-context-chart"></canvas>
+    </div>
+  </div>
+
+  <div class="dashboard-bottom-grid">
+    <div class="recent-activities">
+      <h4><i class="fas fa-history"></i> Erros Recentes</h4>
+      <ul id="recent-errors-list" class="activity-list">
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+      </ul>
+    </div>
+
+    <div class="quick-summary">
+      <h4><i class="fas fa-clipboard-list"></i> Top 5 Erros Mais Frequentes</h4>
+      <ul id="top-errors-list" class="summary-list">
+        <li class="loading-placeholder-item"><div class="loading-placeholder small"></div></li>
+        <li class="loading-placeholder-item"><div class="loading-placeholder small"></div></li>
+        <li class="loading-placeholder-item"><div class="loading-placeholder small"></div></li>
+      </ul>
+    </div>
+  </div>
+</div>

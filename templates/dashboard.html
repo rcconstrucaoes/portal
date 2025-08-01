@@ -1,0 +1,91 @@
+<div id="page-dashboard" class="page-dashboard">
+
+  <div class="dashboard-header">
+    <h3>Dashboard Principal</h3>
+    <div class="date-range-picker">
+      <span>Período:</span>
+      <input type="date" id="start-date">
+      <span>até</span>
+      <input type="date" id="end-date">
+      <button class="btn btn-sm btn-primary">Aplicar</button> </div>
+  </div>
+
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card loading">
+        <div class="stat-icon"><i class="fas fa-spinner fa-spin"></i></div>
+        <div class="stat-content">
+            <div class="loading-placeholder large"></div>
+            <div class="loading-placeholder small"></div>
+        </div>
+    </div>
+    <div class="stat-card loading">
+        <div class="stat-icon"><i class="fas fa-spinner fa-spin"></i></div>
+        <div class="stat-content">
+            <div class="loading-placeholder large"></div>
+            <div class="loading-placeholder small"></div>
+        </div>
+    </div>
+    <div class="stat-card loading">
+        <div class="stat-icon"><i class="fas fa-spinner fa-spin"></i></div>
+        <div class="stat-content">
+            <div class="loading-placeholder large"></div>
+            <div class="loading-placeholder small"></div>
+        </div>
+    </div>
+    <div class="stat-card loading">
+        <div class="stat-icon"><i class="fas fa-spinner fa-spin"></i></div>
+        <div class="stat-content">
+            <div class="loading-placeholder large"></div>
+            <div class="loading-placeholder small"></div>
+        </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-container large">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-line"></i> Visão Geral Financeira</h4>
+      </div>
+      <canvas id="financialChart"></canvas> </div>
+
+    <div class="chart-container medium">
+      <div class="chart-header">
+        <h4><i class="fas fa-users"></i> Novos Clientes</h4>
+      </div>
+      <canvas id="clientsChart"></canvas> </div>
+    <div class="chart-container medium">
+      <div class="chart-header">
+        <h4><i class="fas fa-handshake"></i> Orçamentos Aprovados</h4>
+      </div>
+      <canvas id="budgetsChart"></canvas> </div>
+  </div>
+
+  <div class="dashboard-bottom-grid">
+    <div class="recent-activities">
+      <h4><i class="fas fa-history"></i> Atividades Recentes</h4>
+      <ul id="recent-activities-list">
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+        <li class="loading-placeholder-item"><div class="loading-placeholder medium"></div></li>
+      </ul>
+    </div>
+
+    <div class="quick-summary">
+      <h4><i class="fas fa-info-circle"></i> Resumo Rápido</h4>
+      <div class="summary-items-list" id="quick-summary-list">
+        <div class="summary-item loading">
+            <div class="loading-placeholder small"></div>
+            <div class="loading-placeholder small"></div>
+        </div>
+        <div class="summary-item loading">
+            <div class="loading-placeholder small"></div>
+            <div class="loading-placeholder small"></div>
+        </div>
+        <div class="summary-item loading">
+            <div class="loading-placeholder small"></div>
+            <div class="loading-placeholder small"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

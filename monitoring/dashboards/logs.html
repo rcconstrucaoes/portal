@@ -1,0 +1,130 @@
+<div id="page-monitoring-logs" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-file-alt"></i> Visualizador de Logs do Sistema</h3>
+    <div class="filter-controls">
+      <div class="date-range-picker">
+        <span>Período:</span>
+        <input type="date" id="logs-start-date">
+        <span>até</span>
+        <input type="date" id="logs-end-date">
+      </div>
+      <div class="select-filter">
+        <label for="log-level-filter">Nível:</label>
+        <select id="log-level-filter" class="form-control">
+          <option value="">Todos</option>
+          <option value="error">Erro</option>
+          <option value="warn">Aviso</option>
+          <option value="info">Info</option>
+          <option value="http">HTTP</option>
+          <option value="debug">Debug</option>
+        </select>
+      </div>
+      <div class="select-filter">
+        <label for="log-context-filter">Contexto:</label>
+        <select id="log-context-filter" class="form-control">
+          <option value="">Todos</option>
+          <option value="AuthManager">Autenticação</option>
+          <option value="Database">Banco de Dados</option>
+          <option value="ClientsController">Clientes</option>
+          <option value="SyncController">Sincronização</option>
+          </select>
+      </div>
+      <div class="search-filter">
+        <input type="text" id="log-search-input" class="form-control" placeholder="Buscar na mensagem...">
+      </div>
+      <button class="btn btn-sm btn-primary" id="apply-logs-filter">Aplicar Filtros</button>
+      <button class="btn btn-sm btn-outline" id="clear-logs-filter">Limpar Filtros</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card error">
+      <div class="stat-icon"><i class="fas fa-bug"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="log-stats-total-errors">0</div>
+        <div class="stat-label">Total de Erros</div>
+      </div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-icon"><i class="fas fa-exclamation"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="log-stats-total-warnings">0</div>
+        <div class="stat-label">Total de Avisos</div>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-clipboard"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="log-stats-total-info">0</div>
+        <div class="stat-label">Logs Info/HTTP</div>
+      </div>
+    </div>
+    <div class="stat-card primary">
+      <div class="stat-icon"><i class="fas fa-database"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="log-stats-total-logs">0</div>
+        <div class="stat-label">Total de Registros</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container card">
+    <div class="card-header">
+      <h4><i class="fas fa-list-ul"></i> Registros de Log</h4>
+      <div class="table-actions">
+        <button class="btn btn-sm btn-outline-primary" id="refresh-logs-button"><i class="fas fa-sync-alt"></i> Atualizar</button>
+        <button class="btn btn-sm btn-outline-primary" id="export-logs-csv-button"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+      </div>
+    </div>
+    <table class="table" id="logs-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Data/Hora</th>
+          <th>Nível</th>
+          <th>Contexto</th>
+          <th>Mensagem</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="logs-table-body">
+        <tr>
+          <td colspan="6" class="text-center loading-placeholder-row">
+            <div class="loading-placeholder large-placeholder"></div>
+            <div class="loading-placeholder medium-placeholder"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-pagination" id="logs-pagination">
+      <button class="btn btn-sm btn-outline" id="prev-page-logs">Anterior</button>
+      <span>Página <span id="current-page-logs">1</span> de <span id="total-pages-logs">1</span></span>
+      <button class="btn btn-sm btn-outline" id="next-page-logs">Próxima</button>
+    </div>
+  </div>
+</div>
+
+<div id="log-details-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Detalhes do Log</h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>ID:</strong> <span id="modal-log-id"></span></p>
+      <p><strong>Data/Hora:</strong> <span id="modal-log-timestamp"></span></p>
+      <p><strong>Nível:</strong> <span id="modal-log-level"></span></p>
+      <p><strong>Contexto:</strong> <span id="modal-log-context"></span></p>
+      <p><strong>Mensagem:</strong> <span id="modal-log-message"></span></p>
+      <div class="log-details-data">
+        <p><strong>Detalhes Adicionais (JSON):</strong></p>
+        <pre><code id="modal-log-data"></code></pre>
+      </div>
+      <p><strong>Stack Trace:</strong></p>
+      <pre><code id="modal-log-stack"></code></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary modal-close">Fechar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<div id="page-monitoring" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-desktop"></i> Monitoramento Geral do Sistema</h3>
+    <div class="filter-controls">
+      <div class="date-range-picker">
+        <span>Período:</span>
+        <input type="date" id="monitoring-start-date">
+        <span>até</span>
+        <input type="date" id="monitoring-end-date">
+      </div>
+      <button class="btn btn-sm btn-primary" id="apply-monitoring-filter">Aplicar</button>
+      <button class="btn btn-sm btn-outline" id="clear-monitoring-filter">Limpar</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card success" id="system-health-card">
+      <div class="stat-icon"><i class="fas fa-heartbeat"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="system-health-status">Saudável</div>
+        <div class="stat-label">Saúde do Sistema</div>
+      </div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="active-alerts-count">0</div>
+        <div class="stat-label">Alertas Ativos</div>
+      </div>
+    </div>
+    <div class="stat-card primary">
+      <div class="stat-icon"><i class="fas fa-server"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="backend-status">Online</div>
+        <div class="stat-label">Status Backend</div>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-globe"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="frontend-status">Online</div>
+        <div class="stat-label">Status Frontend</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-container large">
+      <div class="chart-header">
+        <h4><i class="fas fa-sitemap"></i> Status dos Serviços Principais</h4>
+        <span class="chart-description">Visão geral da disponibilidade dos componentes essenciais.</span>
+      </div>
+      <div id="service-status-overview">
+        <div class="service-item loading">
+          <div class="loading-placeholder small-circle"></div>
+          <div class="loading-placeholder small"></div>
+        </div>
+        <div class="service-item loading">
+          <div class="loading-placeholder small-circle"></div>
+          <div class="loading-placeholder small"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container medium">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-line"></i> Métricas de Desempenho Chave</h4>
+        <span class="chart-description">Latência da API e uso de recursos.</span>
+      </div>
+      <canvas id="key-performance-metrics-chart"></canvas>
+    </div>
+
+    <div class="chart-container medium">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-bar"></i> Visão Geral de Logs e Erros</h4>
+        <span class="chart-description">Contagem de logs por nível e principais erros.</span>
+      </div>
+      <canvas id="logs-errors-overview-chart"></canvas>
+    </div>
+  </div>
+
+  <div class="dashboard-bottom-grid action-cards-grid">
+    <div class="card action-card" data-page-target="errors">
+      <div class="card-icon"><i class="fas fa-bug"></i></div>
+      <div class="card-title">Gerenciar Erros</div>
+      <div class="card-description">Analise e resolva problemas do sistema.</div>
+      <button class="btn btn-outline-primary btn-sm"><i class="fas fa-arrow-right"></i> Ir para</button>
+    </div>
+    <div class="card action-card" data-page-target="logs">
+      <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+      <div class="card-title">Visualizar Logs</div>
+      <div class="card-description">Explore o histórico completo de logs da aplicação.</div>
+      <button class="btn btn-outline-primary btn-sm"><i class="fas fa-arrow-right"></i> Ir para</button>
+    </div>
+    <div class="card action-card" data-page-target="performance">
+      <div class="card-icon"><i class="fas fa-tachometer-alt"></i></div>
+      <div class="card-title">Monitorar Performance</div>
+      <div class="card-description">Acompanhe métricas de velocidade e otimização.</div>
+      <button class="btn btn-outline-primary btn-sm"><i class="fas fa-arrow-right"></i> Ir para</button>
+    </div>
+    <div class="card action-card" data-page-target="users">
+      <div class="card-icon"><i class="fas fa-users-cog"></i></div>
+      <div class="card-title">Gerenciar Usuários</div>
+      <div class="card-description">Administre contas de usuários e permissões.</div>
+      <button class="btn btn-outline-primary btn-sm"><i class="fas fa-arrow-right"></i> Ir para</button>
+    </div>
+  </div>
+</div>

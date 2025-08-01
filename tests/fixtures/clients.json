@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "name": "Construtora Alfa Ltda.",
+    "email": "contato@construtoraalfa.com",
+    "phone": "(11) 98765-4321",
+    "address": "Av. Brasil, 1000 - Centro, São Paulo - SP",
+    "cpf": "123.456.789-01",
+    "isActive": true,
+    "createdAt": 1720694400000,
+    "updatedAt": 1720694400000
+  },
+  {
+    "id": 2,
+    "name": "Engenharia Beta S.A.",
+    "email": "comercial@engenhariabeta.com",
+    "phone": "(21) 99876-5432",
+    "address": "Rua das Laranjeiras, 50 - Laranjeiras, Rio de Janeiro - RJ",
+    "cpf": "234.567.890-12",
+    "isActive": true,
+    "createdAt": 1720780800000,
+    "updatedAt": 1720780800000
+  },
+  {
+    "id": 3,
+    "name": "Projetos Gamma",
+    "email": "projetos@gammaconst.com",
+    "phone": "(31) 97654-3210",
+    "address": "Av. Afonso Pena, 150 - Funcionários, Belo Horizonte - MG",
+    "cpf": "345.678.901-23",
+    "isActive": true,
+    "createdAt": 1720867200000,
+    "updatedAt": 1720867200000
+  },
+  {
+    "id": 4,
+    "name": "Soluções Delta Ltda.",
+    "email": "vendas@solucoesdelta.com",
+    "phone": "(41) 96543-2109",
+    "address": "Rua XV de Novembro, 200 - Centro, Curitiba - PR",
+    "cpf": "456.789.012-34",
+    "isActive": false,
+    "createdAt": 1720953600000,
+    "updatedAt": 1720953600000
+  },
+  {
+    "id": 5,
+    "name": "Infraestrutura Epsilon",
+    "email": "contato@infraepsilon.com",
+    "phone": "(51) 95432-1098",
+    "address": "Av. Farrapos, 300 - Floresta, Porto Alegre - RS",
+    "cpf": null,
+    "isActive": true,
+    "createdAt": 1721040000000,
+    "updatedAt": 1721040000000
+  },
+  {
+    "id": 6,
+    "name": "Construções Zeta",
+    "email": "zeta@construcoes.com",
+    "phone": "(61) 94321-0987",
+    "address": "SQS 102 Bloco B - Asa Sul, Brasília - DF",
+    "cpf": "678.901.234-56",
+    "isActive": true,
+    "createdAt": 1721126400000,
+    "updatedAt": 1721126400000
+  },
+  {
+    "id": 7,
+    "name": "Reforma Mega",
+    "email": "atendimento@reformamega.com",
+    "phone": "(71) 93210-9876",
+    "address": "Rua Chile, 50 - Centro, Salvador - BA",
+    "cpf": "789.012.345-67",
+    "isActive": false,
+    "createdAt": 1721212800000,
+    "updatedAt": 1721212800000
+  },
+  {
+    "id": 8,
+    "name": "Projetos Ômega",
+    "email": "omega@projetos.com",
+    "phone": "(81) 92109-8765",
+    "address": "Av. Boa Viagem, 100 - Boa Viagem, Recife - PE",
+    "cpf": null,
+    "isActive": true,
+    "createdAt": 1721299200000,
+    "updatedAt": 1721299200000
+  },
+  {
+    "id": 9,
+    "name": "Soluções Xis",
+    "email": "xis@solucoes.com",
+    "phone": "(85) 91098-7654",
+    "address": "Rua Barão do Rio Branco, 200 - Centro, Fortaleza - CE",
+    "cpf": "901.234.567-89",
+    "isActive": true,
+    "createdAt": 1721385600000,
+    "updatedAt": 1721385600000
+  },
+  {
+    "id": 10,
+    "name": "Construção Ypsilon",
+    "email": "contato@ypsilon.com",
+    "phone": "(91) 90987-6543",
+    "address": "Av. Nazaré, 300 - Nazaré, Belém - PA",
+    "cpf": "012.345.678-90",
+    "isActive": true,
+    "createdAt": 1721472000000,
+    "updatedAt": 1721472000000
+  }
+]

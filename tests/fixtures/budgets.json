@@ -1,0 +1,82 @@
+[
+  {
+    "id": 101,
+    "clientId": 1,
+    "title": "Orçamento Instalação Elétrica Prédio Comercial",
+    "description": "Orçamento detalhado para instalação elétrica completa em novo prédio comercial de 3 andares, incluindo cabeamento, painéis, iluminação e tomadas.",
+    "amount": 75000.50,
+    "status": "Pendente",
+    "createdAt": 1721990400000,
+    "updatedAt": 1722422400000
+  },
+  {
+    "id": 102,
+    "clientId": 2,
+    "title": "Orçamento Construção Casa Térrea - Res. Jardim",
+    "description": "Construção de casa térrea de 150m² em condomínio residencial, incluindo fundação, alvenaria, cobertura e acabamentos básicos.",
+    "amount": 450000.00,
+    "status": "Aprovado",
+    "createdAt": 1720867200000,
+    "updatedAt": 1721510400000
+  },
+  {
+    "id": 103,
+    "clientId": 3,
+    "title": "Orçamento Reforma Cozinha Industrial",
+    "description": "Reforma completa de cozinha para restaurante industrial, incluindo troca de revestimentos, bancadas, sistemas de exaustão e instalação de novos equipamentos.",
+    "amount": 92000.75,
+    "status": "Rejeitado",
+    "createdAt": 1721040000000,
+    "updatedAt": 1721126400000
+  },
+  {
+    "id": 104,
+    "clientId": 1,
+    "title": "Orçamento Pintura Externa Galpão",
+    "description": "Pintura externa de galpão industrial de 800m², incluindo preparação da superfície e aplicação de tinta acrílica em duas demãos.",
+    "amount": 18500.00,
+    "status": "Pendente",
+    "createdAt": 1722076800000,
+    "updatedAt": 1722076800000
+  },
+  {
+    "id": 105,
+    "clientId": 4,
+    "title": "Orçamento Ampliação Escritório Central",
+    "description": "Ampliação de 50m² em escritório existente, com construção de nova sala de reuniões e espaço de coworking, incluindo instalações e acabamentos.",
+    "amount": 120000.00,
+    "status": "Aprovado",
+    "createdAt": 1720521600000,
+    "updatedAt": 1721040000000
+  },
+  {
+    "id": 106,
+    "clientId": 2,
+    "title": "Orçamento Manutenção Predial Trimestral",
+    "description": "Contrato de manutenção predial preventiva e corretiva para condomínio residencial, incluindo revisões trimestrais de sistemas hidráulicos, elétricos e telhado.",
+    "amount": 3500.00,
+    "status": "Aprovado",
+    "createdAt": 1719748800000,
+    "updatedAt": 1720353600000
+  },
+  {
+    "id": 107,
+    "clientId": 5,
+    "title": "Orçamento Demolição Estrutura Antiga",
+    "description": "Demolição controlada de estrutura de concreto armado de 200m² em terreno para nova construção, com remoção de entulho.",
+    "amount": 45000.00,
+    "status": "Pendente",
+    "createdAt": 1722336000000,
+    "updatedAt": 1722336000000
+  },
+  {
+    "id": 108,
+    "clientId": 3,
+    "title": "Orçamento Projeto Paisagístico Corporativo",
+    "description": "Criação e execução de projeto paisagístico para área externa de sede corporativa, com implantação de jardins, espelho d'água e sistema de irrigação.",
+    "amount": 60000.00,
+    "status": "Cancelado",
+    "createdAt": 1720156800000,
+    "updatedAt": 1720243200000
+  }
+]

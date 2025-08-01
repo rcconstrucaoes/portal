@@ -1,0 +1,80 @@
+[
+  {
+    "id": 201,
+    "clientId": 1,
+    "budgetId": 102,
+    "title": "Contrato de Construção Residencial - Fase 1",
+    "terms": "Construção de estrutura bruta, incluindo fundação, alvenaria e laje. Pagamento em 3 parcelas, conforme cronograma.",
+    "value": 250000.00,
+    "startDate": 1722422400000,
+    "endDate": 1727779200000,
+    "status": "Ativo",
+    "createdAt": 1722336000000,
+    "updatedAt": 1722336000000
+  },
+  {
+    "id": 202,
+    "clientId": 2,
+    "budgetId": 105,
+    "title": "Contrato de Ampliação de Escritório - Fase 2",
+    "terms": "Finalização de acabamentos internos, instalações elétricas e hidráulicas. Pagamento em 2 parcelas, após medição.",
+    "value": 60000.00,
+    "startDate": 1721510400000,
+    "endDate": 1724275200000,
+    "status": "Ativo",
+    "createdAt": 1721424000000,
+    "updatedAt": 1721424000000
+  },
+  {
+    "id": 203,
+    "clientId": 1,
+    "budgetId": 101,
+    "title": "Contrato de Instalação Elétrica - Completo",
+    "terms": "Fornecimento e instalação de todo o sistema elétrico do prédio, conforme projeto. Pagamento em 4 etapas.",
+    "value": 75000.50,
+    "startDate": 1722422400000,
+    "endDate": 1724880000000,
+    "status": "Concluído",
+    "createdAt": 1722076800000,
+    "updatedAt": 1722336000000
+  },
+  {
+    "id": 204,
+    "clientId": 3,
+    "budgetId": 103,
+    "title": "Contrato de Reforma Cozinha - Aditivo",
+    "terms": "Aditivo para inclusão de novos equipamentos de refrigeração e ajustes no layout. Valor adicional e prazo estendido.",
+    "value": 15000.00,
+    "startDate": 1721126400000,
+    "endDate": 1721731200000,
+    "status": "Suspenso",
+    "createdAt": 1721040000000,
+    "updatedAt": 1721126400000
+  },
+  {
+    "id": 205,
+    "clientId": 4,
+    "budgetId": null,
+    "title": "Contrato de Consultoria Estrutural",
+    "terms": "Prestação de serviços de consultoria para análise estrutural de galpão industrial, com emissão de laudo técnico.",
+    "value": 12000.00,
+    "startDate": 1722508800000,
+    "endDate": 1722940800000,
+    "status": "Ativo",
+    "createdAt": 1722422400000,
+    "updatedAt": 1722422400000
+  },
+  {
+    "id": 206,
+    "clientId": 5,
+    "budgetId": 107,
+    "title": "Contrato de Demolição e Limpeza de Terreno",
+    "terms": "Demolição de estrutura existente e remoção completa de entulho, preparação do terreno para nova construção.",
+    "value": 45000.00,
+    "startDate": 1722940800000,
+    "endDate": 1723459200000,
+    "status": "Pendente",
+    "createdAt": 1722854400000,
+    "updatedAt": 1722854400000
+  }
+]

@@ -1,0 +1,173 @@
+<div id="page-suppliers" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-truck-loading"></i> Fornecedores</h3>
+    <div class="filter-controls">
+      <div class="search-filter">
+        <input type="text" id="supplier-search-input" class="form-control" placeholder="Buscar por nome, e-mail ou CNPJ...">
+      </div>
+      <div class="select-filter">
+        <label for="supplier-status-filter">Status:</label>
+        <select id="supplier-status-filter" class="form-control">
+          <option value="">Todos</option>
+          <option value="active">Ativo</option>
+          <option value="inactive">Inativo</option>
+        </select>
+      </div>
+      <button class="btn btn-sm btn-primary" id="apply-supplier-filter">Aplicar Filtros</button>
+      <button class="btn btn-sm btn-outline" id="clear-supplier-filter">Limpar Filtros</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card primary">
+      <div class="stat-icon"><i class="fas fa-industry"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="suppliers-total-count">0</div>
+        <div class="stat-label">Total de Fornecedores</div>
+      </div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="suppliers-active-count">0</div>
+        <div class="stat-label">Fornecedores Ativos</div>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="suppliers-with-contracts-count">0</div>
+        <div class="stat-label">Com Contratos</div>
+      </div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="suppliers-new-this-month">0</div>
+        <div class="stat-label">Novos Este Mês</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container card">
+    <div class="card-header">
+      <h4><i class="fas fa-list-ul"></i> Lista de Fornecedores</h4>
+      <div class="table-actions">
+        <button class="btn btn-sm btn-primary" id="add-supplier-button"><i class="fas fa-plus"></i> Adicionar Fornecedor</button>
+        <button class="btn btn-sm btn-outline-primary" id="import-suppliers-button"><i class="fas fa-file-import"></i> Importar</button>
+        <button class="btn btn-sm btn-outline-primary" id="export-suppliers-csv-button"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+      </div>
+    </div>
+    <table class="table" id="suppliers-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Contato</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>CNPJ</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="suppliers-table-body">
+        <tr>
+          <td colspan="8" class="text-center loading-placeholder-row">
+            <div class="loading-placeholder large-placeholder"></div>
+            <div class="loading-placeholder medium-placeholder"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-pagination" id="suppliers-pagination">
+      <button class="btn btn-sm btn-outline" id="prev-page-suppliers">Anterior</button>
+      <span>Página <span id="current-page-suppliers">1</span> de <span id="total-pages-suppliers">1</span></span>
+      <button class="btn btn-sm btn-outline" id="next-page-suppliers">Próxima</button>
+    </div>
+  </div>
+</div>
+
+<div id="supplier-form-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="supplier-modal-title">Adicionar Novo Fornecedor</h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="supplier-form">
+        <input type="hidden" id="supplier-id">
+        <div class="form-group">
+          <label for="supplier-name" class="form-label required">Nome do Fornecedor:</label>
+          <input type="text" id="supplier-name" name="name" class="form-control" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-name"></span>
+        </div>
+        <div class="form-group">
+          <label for="supplier-contact-name" class="form-label">Nome do Contato:</label>
+          <input type="text" id="supplier-contact-name" name="contactName" class="form-control">
+          <span class="text-danger" data-testid="validation-error-message" id="error-contact-name"></span>
+        </div>
+        <div class="form-group">
+          <label for="supplier-email" class="form-label required">E-mail de Contato:</label>
+          <input type="email" id="supplier-email" name="email" class="form-control" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-email"></span>
+        </div>
+        <div class="form-group">
+          <label for="supplier-phone" class="form-label required">Telefone de Contato:</label>
+          <input type="text" id="supplier-phone" name="phone" class="form-control" placeholder="(XX) XXXXX-XXXX" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-phone"></span>
+        </div>
+        <div class="form-group">
+          <label for="supplier-address" class="form-label">Endereço:</label>
+          <input type="text" id="supplier-address" name="address" class="form-control">
+          <span class="text-danger" data-testid="validation-error-message" id="error-address"></span>
+        </div>
+        <div class="form-group">
+          <label for="supplier-cnpj" class="form-label">CNPJ:</label>
+          <input type="text" id="supplier-cnpj" name="cnpj" class="form-control" placeholder="XX.XXX.XXX/XXXX-XX">
+          <span class="text-danger" data-testid="validation-error-message" id="error-cnpj"></span>
+        </div>
+        <div class="form-group">
+          <label for="supplier-status" class="form-label">Status:</label>
+          <select id="supplier-status" name="isActive" class="form-control">
+            <option value="true">Ativo</option>
+            <option value="false">Inativo</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary modal-close">Cancelar</button>
+      <button class="btn btn-primary" id="save-supplier-button">Salvar Fornecedor</button>
+    </div>
+  </div>
+</div>
+
+<div id="supplier-details-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="supplier-details-title">Detalhes do Fornecedor: <span id="details-supplier-name"></span></h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>ID:</strong> <span id="details-supplier-id"></span></p>
+      <p><strong>Nome Contato:</strong> <span id="details-supplier-contact-name"></span></p>
+      <p><strong>E-mail:</strong> <span id="details-supplier-email"></span></p>
+      <p><strong>Telefone:</strong> <span id="details-supplier-phone"></span></p>
+      <p><strong>Endereço:</strong> <span id="details-supplier-address"></span></p>
+      <p><strong>CNPJ:</strong> <span id="details-supplier-cnpj"></span></p>
+      <p><strong>Status:</strong> <span id="details-supplier-status"></span></p>
+      <p><strong>Criado em:</strong> <span id="details-supplier-created-at"></span></p>
+      <p><strong>Última Atualização:</strong> <span id="details-supplier-updated-at"></span></p>
+
+      <div class="supplier-actions-details">
+        <h3>Ações</h3>
+        <button class="btn btn-warning" id="edit-supplier-details-button"><i class="fas fa-edit"></i> Editar</button>
+        <button class="btn btn-danger" id="delete-supplier-button"><i class="fas fa-trash-alt"></i> Excluir</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary modal-close">Fechar</button>
+    </div>
+  </div>
+</div>

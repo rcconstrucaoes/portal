@@ -1,0 +1,208 @@
+<div id="page-financial" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-chart-line"></i> Financeiro</h3>
+    <div class="filter-controls">
+      <div class="date-range-picker">
+        <span>Período:</span>
+        <input type="date" id="financial-start-date">
+        <span>até</span>
+        <input type="date" id="financial-end-date">
+      </div>
+      <div class="select-filter">
+        <label for="financial-type-filter">Tipo:</label>
+        <select id="financial-type-filter" class="form-control">
+          <option value="">Todos</option>
+          <option value="Receita">Receita</option>
+          <option value="Despesa">Despesa</option>
+        </select>
+      </div>
+      <div class="select-filter">
+        <label for="financial-category-filter">Categoria:</label>
+        <select id="financial-category-filter" class="form-control">
+          <option value="">Todas</option>
+          <option value="Material">Material</option>
+          <option value="Mão de Obra">Mão de Obra</option>
+          <option value="Aluguel">Aluguel</option>
+          <option value="Serviço">Serviço</option>
+          <option value="Administrativo">Administrativo</option>
+          <option value="Imposto">Imposto</option>
+          <option value="Outros">Outros</option>
+          </select>
+      </div>
+      <div class="search-filter">
+        <input type="text" id="financial-search-input" class="form-control" placeholder="Buscar na descrição...">
+      </div>
+      <button class="btn btn-sm btn-primary" id="apply-financial-filter">Aplicar Filtros</button>
+      <button class="btn btn-sm btn-outline" id="clear-financial-filter">Limpar Filtros</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card success">
+      <div class="stat-icon"><i class="fas fa-plus-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="financial-total-revenue">0</div>
+        <div class="stat-label">Receita Total</div>
+      </div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-icon"><i class="fas fa-minus-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="financial-total-expense">0</div>
+        <div class="stat-label">Despesa Total</div>
+      </div>
+    </div>
+    <div class="stat-card info">
+      <div class="stat-icon"><i class="fas fa-balance-scale"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="financial-balance">0</div>
+        <div class="stat-label">Balanço Atual</div>
+      </div>
+    </div>
+    <div class="stat-card primary">
+      <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="financial-average-transaction">0</div>
+        <div class="stat-label">Transação Média</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-container large">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-area"></i> Fluxo de Caixa Mensal</h4>
+        <span class="chart-description">Receitas e Despesas ao longo do tempo.</span>
+      </div>
+      <canvas id="cash-flow-chart"></canvas>
+    </div>
+
+    <div class="chart-container medium">
+      <div class="chart-header">
+        <h4><i class="fas fa-chart-pie"></i> Distribuição por Categoria (Despesas)</h4>
+        <span class="chart-description">Como as despesas se dividem por categoria.</span>
+      </div>
+      <canvas id="expense-category-chart"></canvas>
+    </div>
+  </div>
+
+  <div class="table-container card">
+    <div class="card-header">
+      <h4><i class="fas fa-list-ul"></i> Transações Financeiras</h4>
+      <div class="table-actions">
+        <button class="btn btn-sm btn-primary" id="add-financial-entry-button"><i class="fas fa-plus"></i> Nova Transação</button>
+        <button class="btn btn-sm btn-outline-primary" id="export-financial-csv-button"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+      </div>
+    </div>
+    <table class="table" id="financial-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Data</th>
+          <th>Tipo</th>
+          <th>Descrição</th>
+          <th>Categoria</th>
+          <th>Valor</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="financial-table-body">
+        <tr>
+          <td colspan="7" class="text-center loading-placeholder-row">
+            <div class="loading-placeholder large-placeholder"></div>
+            <div class="loading-placeholder medium-placeholder"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-pagination" id="financial-pagination">
+      <button class="btn btn-sm btn-outline" id="prev-page-financial">Anterior</button>
+      <span>Página <span id="current-page-financial">1</span> de <span id="total-pages-financial">1</span></span>
+      <button class="btn btn-sm btn-outline" id="next-page-financial">Próxima</button>
+    </div>
+  </div>
+</div>
+
+<div id="financial-form-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="financial-modal-title">Nova Transação Financeira</h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="financial-form">
+        <input type="hidden" id="financial-entry-id">
+        <div class="form-group">
+          <label for="financial-type" class="form-label required">Tipo:</label>
+          <select id="financial-type" name="type" class="form-control" required>
+            <option value="Receita">Receita</option>
+            <option value="Despesa">Despesa</option>
+          </select>
+          <span class="text-danger" data-testid="validation-error-message" id="error-type"></span>
+        </div>
+        <div class="form-group">
+          <label for="financial-date" class="form-label required">Data:</label>
+          <input type="date" id="financial-date" name="date" class="form-control" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-date"></span>
+        </div>
+        <div class="form-group">
+          <label for="financial-category" class="form-label required">Categoria:</label>
+          <select id="financial-category" name="category" class="form-control" required>
+            <option value="" disabled selected>Selecione uma categoria</option>
+            <option value="Material">Material</option>
+            <option value="Mão de Obra">Mão de Obra</option>
+            <option value="Aluguel">Aluguel</option>
+            <option value="Serviço">Serviço</option>
+            <option value="Administrativo">Administrativo</option>
+            <option value="Imposto">Imposto</option>
+            <option value="Outros">Outros</option>
+          </select>
+          <span class="text-danger" data-testid="validation-error-message" id="error-category"></span>
+        </div>
+        <div class="form-group">
+          <label for="financial-description" class="form-label required">Descrição:</label>
+          <textarea id="financial-description" name="description" class="form-control" required></textarea>
+          <span class="text-danger" data-testid="validation-error-message" id="error-description"></span>
+        </div>
+        <div class="form-group">
+          <label for="financial-amount" class="form-label required">Valor:</label>
+          <input type="number" id="financial-amount" name="amount" class="form-control" step="0.01" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-amount"></span>
+        </div>
+        <div class="form-group">
+          <label for="financial-reference-id" class="form-label">ID de Referência (Opcional):</label>
+          <input type="text" id="financial-reference-id" name="referenceId" class="form-control" placeholder="Ex: ID do Contrato, Orçamento">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary modal-close">Cancelar</button>
+      <button class="btn btn-primary" id="save-financial-button">Salvar Transação</button>
+    </div>
+  </div>
+</div>
+
+<div id="financial-details-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="financial-details-title">Detalhes da Transação</h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>ID:</strong> <span id="details-financial-id"></span></p>
+      <p><strong>Data:</strong> <span id="details-financial-date"></span></p>
+      <p><strong>Tipo:</strong> <span id="details-financial-type"></span></p>
+      <p><strong>Categoria:</strong> <span id="details-financial-category"></span></p>
+      <p><strong>Valor:</strong> <span id="details-financial-amount"></span></p>
+      <p><strong>Descrição:</strong> <span id="details-financial-description"></span></p>
+      <p><strong>ID de Referência:</strong> <span id="details-financial-reference-id"></span></p>
+      <p><strong>Criado em:</strong> <span id="details-financial-created-at"></span></p>
+      <p><strong>Última Atualização:</strong> <span id="details-financial-updated-at"></span></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-warning" id="edit-financial-entry-button"><i class="fas fa-edit"></i> Editar</button>
+      <button class="btn btn-danger" id="delete-financial-entry-button"><i class="fas fa-trash-alt"></i> Excluir</button>
+      <button class="btn btn-secondary modal-close">Fechar</button>
+    </div>
+  </div>
+</div>

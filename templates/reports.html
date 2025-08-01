@@ -1,0 +1,99 @@
+<div id="page-reports" class="page-dashboard-content">
+  <div class="reports-header dashboard-header">
+    <h3><i class="fas fa-chart-bar"></i> Central de Relatórios</h3>
+    <div class="header-description">
+      <p>Analise o desempenho do seu negócio com relatórios detalhados e personalizados.</p>
+    </div>
+  </div>
+
+  <div class="report-filters card">
+    <div class="card-header">
+      <h4><i class="fas fa-filter"></i> Gerar Novo Relatório</h4>
+    </div>
+    <div class="card-body">
+      <div class="form-grid three-columns">
+        <div class="form-group">
+          <label for="report-area-select" class="form-label required">Área do Relatório:</label>
+          <select id="report-area-select" class="form-control" name="reportArea" required>
+            <option value="" disabled selected>Selecione uma área</option>
+            <option value="financial">Financeiro</option>
+            <option value="clients">Clientes</option>
+            <option value="budgets">Orçamentos</option>
+            <option value="contracts">Contratos</option>
+            <option value="users">Usuários</option>
+            </select>
+        </div>
+        <div class="form-group">
+          <label for="report-type-select" class="form-label required">Tipo de Relatório:</label>
+          <select id="report-type-select" class="form-control" name="reportType" required>
+            <option value="" disabled selected>Selecione um tipo</option>
+            </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Período:</label>
+          <div class="date-range-inputs">
+            <input type="date" id="report-start-date" class="form-control" name="startDate">
+            <span class="date-separator">até</span>
+            <input type="date" id="report-end-date" class="form-control" name="endDate">
+          </div>
+        </div>
+      </div>
+      <div class="form-grid two-columns">
+        <div class="form-group">
+          <label for="report-format-select" class="form-label required">Formato de Saída:</label>
+          <select id="report-format-select" class="form-control" name="format" required>
+            <option value="html" selected>Visualizar (HTML)</option>
+            <option value="csv">Exportar CSV</option>
+            <option value="pdf">Exportar PDF</option>
+            <option value="json">Exportar JSON (Dados Brutos)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="report-group-by" class="form-label">Agrupar por (Opcional):</label>
+          <select id="report-group-by" class="form-control" name="groupBy">
+            <option value="">Nenhum</option>
+            </select>
+        </div>
+      </div>
+      <div class="filter-actions text-right">
+        <button id="generate-report-btn" class="btn btn-primary"><i class="fas fa-cogs"></i> Gerar Relatório</button>
+        <button id="clear-report-filters-btn" class="btn btn-outline-secondary"><i class="fas fa-broom"></i> Limpar Filtros</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-content card">
+    <div class="card-header">
+      <h4 id="report-output-title">Resultado do Relatório</h4>
+      <div class="table-actions">
+        <button class="btn btn-sm btn-outline-primary" id="download-report-btn" style="display: none;"><i class="fas fa-download"></i> Download</button>
+        <button class="btn btn-sm btn-outline-danger" id="clear-report-output-btn" style="display: none;"><i class="fas fa-times"></i> Limpar</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="report-output-area" class="report-output-area">
+        <p class="text-center text-muted" id="initial-report-message">Selecione os filtros acima e clique em "Gerar Relatório" para visualizar os dados.</p>
+        <div class="loading-placeholder-report" style="display: none;">
+          <div class="loading-spinner"></div>
+          <p>Gerando relatório...</p>
+        </div>
+        <div id="report-error-message" class="alert alert-danger" style="display: none;"></div>
+        
+        <div class="report-table-container" style="display: none;">
+          <table class="table table-bordered" id="generated-report-table">
+            <thead>
+              <tr id="report-table-headers">
+                </tr>
+            </thead>
+            <tbody id="report-table-body">
+              </tbody>
+          </table>
+        </div>
+
+        <div class="report-chart-container" style="display: none;">
+          <canvas id="generated-report-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

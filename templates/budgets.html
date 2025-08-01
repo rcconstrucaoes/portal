@@ -1,0 +1,182 @@
+<div id="page-budgets" class="page-dashboard-content">
+  <div class="dashboard-header">
+    <h3><i class="fas fa-file-invoice-dollar"></i> Orçamentos</h3>
+    <div class="filter-controls">
+      <div class="date-range-picker">
+        <span>Período:</span>
+        <input type="date" id="budgets-start-date">
+        <span>até</span>
+        <input type="date" id="budgets-end-date">
+      </div>
+      <div class="select-filter">
+        <label for="budget-status-filter">Status:</label>
+        <select id="budget-status-filter" class="form-control">
+          <option value="">Todos</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Aprovado">Aprovado</option>
+          <option value="Rejeitado">Rejeitado</option>
+          <option value="Cancelado">Cancelado</option>
+        </select>
+      </div>
+      <div class="search-filter">
+        <input type="text" id="budget-search-input" class="form-control" placeholder="Buscar por título...">
+      </div>
+      <button class="btn btn-sm btn-primary" id="apply-budgets-filter">Aplicar Filtros</button>
+      <button class="btn btn-sm btn-outline" id="clear-budgets-filter">Limpar Filtros</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card primary">
+      <div class="stat-icon"><i class="fas fa-calculator"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="budgets-total-count">0</div>
+        <div class="stat-label">Total de Orçamentos</div>
+      </div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="budgets-approved-count">0</div>
+        <div class="stat-label">Orçamentos Aprovados</div>
+      </div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="budgets-pending-count">0</div>
+        <div class="stat-label">Orçamentos Pendentes</div>
+      </div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+      <div class="stat-content">
+        <div class="stat-value" id="budgets-rejected-count">0</div>
+        <div class="stat-label">Orçamentos Rejeitados</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container card">
+    <div class="card-header">
+      <h4><i class="fas fa-list-ul"></i> Lista de Orçamentos</h4>
+      <div class="table-actions">
+        <button class="btn btn-sm btn-primary" id="add-budget-button"><i class="fas fa-plus"></i> Adicionar Orçamento</button>
+        <button class="btn btn-sm btn-outline-primary" id="export-budgets-csv-button"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+      </div>
+    </div>
+    <table class="table" id="budgets-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Título</th>
+          <th>Valor</th>
+          <th>Status</th>
+          <th>Data Criação</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="budgets-table-body">
+        <tr>
+          <td colspan="7" class="text-center loading-placeholder-row">
+            <div class="loading-placeholder large-placeholder"></div>
+            <div class="loading-placeholder medium-placeholder"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-pagination" id="budgets-pagination">
+      <button class="btn btn-sm btn-outline" id="prev-page-budgets">Anterior</button>
+      <span>Página <span id="current-page-budgets">1</span> de <span id="total-pages-budgets">1</span></span>
+      <button class="btn btn-sm btn-outline" id="next-page-budgets">Próxima</button>
+    </div>
+  </div>
+</div>
+
+<div id="budget-form-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="budget-modal-title">Adicionar Novo Orçamento</h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="budget-form">
+        <input type="hidden" id="budget-id">
+        <div class="form-group">
+          <label for="budget-client" class="form-label required">Cliente:</label>
+          <select id="budget-client" name="clientId" class="form-control" data-testid="client-select" required>
+            <option value="" disabled selected>Selecione um cliente</option>
+            <option value="1" data-testid="client-option">Cliente Teste 1</option>
+            <option value="2" data-testid="client-option">Cliente Teste 2</option>
+          </select>
+          <span class="text-danger" data-testid="validation-error-message" id="error-client"></span>
+        </div>
+        <div class="form-group">
+          <label for="budget-title" class="form-label required">Título:</label>
+          <input type="text" id="budget-title" name="title" class="form-control" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-title"></span>
+        </div>
+        <div class="form-group">
+          <label for="budget-description" class="form-label">Descrição:</label>
+          <textarea id="budget-description" name="description" class="form-control"></textarea>
+          <span class="text-danger" data-testid="validation-error-message" id="error-description"></span>
+        </div>
+        <div class="form-group">
+          <label for="budget-amount" class="form-label required">Valor:</label>
+          <input type="number" id="budget-amount" name="amount" class="form-control" step="0.01" required>
+          <span class="text-danger" data-testid="validation-error-message" id="error-amount"></span>
+        </div>
+        <div class="form-group">
+          <label for="budget-status" class="form-label required">Status:</label>
+          <select id="budget-status" name="status" class="form-control" required>
+            <option value="Pendente">Pendente</option>
+            <option value="Aprovado">Aprovado</option>
+            <option value="Rejeitado">Rejeitado</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+          <span class="text-danger" data-testid="validation-error-message" id="error-status"></span>
+        </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary modal-close">Cancelar</button>
+      <button class="btn btn-primary" id="save-budget-button" data-testid="submit-budget-button">Salvar Orçamento</button>
+    </div>
+  </div>
+</div>
+
+<div id="budget-details-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="budget-details-title">Detalhes do Orçamento: <span id="details-budget-title"></span></h2>
+      <button class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>ID:</strong> <span id="details-budget-id"></span></p>
+      <p><strong>Cliente:</strong> <span id="details-budget-client-name"></span> (<span id="details-budget-client-email"></span>)</p>
+      <p><strong>Valor:</strong> <span id="details-budget-amount" data-testid="budget-total"></span></p>
+      <p><strong>Status:</strong> <span id="details-budget-status"></span></p>
+      <p><strong>Data de Criação:</strong> <span id="details-budget-created-at"></span></p>
+      <p><strong>Última Atualização:</strong> <span id="details-budget-updated-at"></span></p>
+      
+      <div class="budget-description-section">
+        <h3>Descrição do Orçamento</h3>
+        <p id="details-budget-description"></p>
+      </div>
+
+      <div class="budget-actions-details">
+        <h3>Ações</h3>
+        <button class="btn btn-success" id="approve-budget-button" data-action="approve-budget"><i class="fas fa-check"></i> Aprovar</button>
+        <button class="btn btn-danger" id="reject-budget-button" data-action="reject-budget"><i class="fas fa-times"></i> Rejeitar</button>
+        <button class="btn btn-info" id="view-contract-button" data-testid="view-contract-button"><i class="fas fa-handshake"></i> Ver Contrato (se houver)</button>
+        <button class="btn btn-outline-primary" id="generate-budget-pdf-button" data-testid="generate-budget-pdf-button"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
+        <button class="btn btn-warning" id="edit-budget-details-button"><i class="fas fa-edit"></i> Editar</button>
+        <button class="btn btn-danger" id="delete-budget-button"><i class="fas fa-trash-alt"></i> Excluir</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary modal-close">Fechar</button>
+    </div>
+  </div>
+</div>
